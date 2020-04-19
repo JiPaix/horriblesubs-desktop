@@ -1,0 +1,39 @@
+doctype html
+html
+ include includes/head.pug
+    script(src='/static/shows.js')
+    body.bg-dark.text-white
+        include includes/topMenu.pug
+        .container-fluid.mt-2
+            .row
+                .col-12
+                    video.embed-responsive.embed-responsive-16by9(controls="controls")
+                        source#player(src="", type="video/mp4")
+                        track#track(src="", kind="subtitles", srclang="en", label="English")
+            .row.mt-2
+                .col-12.text-center
+                    each link in show.links
+                        if lastwatched.length > 0
+                            if lastwatched.includes(link.ep)
+                                button.ep.m-1.btn.btn-danger(data-bot=link.bots[0].bot, data-pack=link.bots[0].pack, data-ep=link.ep) #{link.ep}
+                            else
+                                button.ep.m-1.btn.btn-secondary(data-bot=link.bots[0].bot, data-pack=link.bots[0].pack, data-ep=link.ep) #{link.ep}
+                        else
+                            button.ep.m-1.btn.btn-secondary(data-bot=link.bots[0].bot, data-pack=link.bots[0].pack, data-ep=link.ep) #{link.ep}       
+                    button#dlall.m-1.btn.btn-info(data=show) Download all episodes
+                    if follows
+                        button#followthis.unfollow.m-1.btn.btn-danger UNFOLLOW
+                    else
+                        button#followthis.follow.m-1.btn.btn-warning FOLLOW
+            .row.mt-4
+                .col-2.text-center
+                    img.img-fluid(src=show.img)
+                .col-10.my-2
+                    h4.text-center #{show.name}
+                    p.mt-3 #{show.desc}
+    script.
+        var myshow = {
+            id: '#{show.id}',
+            name: '#{show.name}',
+            ep: ''
+        }

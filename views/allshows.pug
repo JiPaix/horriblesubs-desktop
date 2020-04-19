@@ -1,0 +1,69 @@
+doctype html
+html
+    include includes/head.pug
+    script(src='//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js')
+    script(src='https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js')
+    link(rel='stylesheet', href='https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css')
+    body.bg-dark.text-white
+        include includes/topMenu.pug
+        main.container.mt-2
+            .mt-4
+                table.table.table-hover.table-dark.table-striped.table-bordered.table-sm(style="width:100%")
+                    thead
+                        tr.bg-secondary
+                            th Watch
+                            th Anime
+                            th MAL
+                    tbody
+                        each show in shows
+                            tr
+                                td.align-middle.text-center
+                                    a.goto(href=show.url) <i class="fas fa-film"></i>
+                                td.align-middle #{show.name}
+                                td.align-middle.text-center.MAL(data-name=show.name, data-search=`https://myanimelist.net/search/prefix.json?type=all&keyword=${encodeURIComponent(show.name)}`) <i class="fas fa-info-circle"></i>
+    style. 
+       .hovered {
+            transform: scale(3);
+            z-index:999;
+        }
+        #blackout {
+            width:100%;
+            height:100%;
+            position: fixed;
+            left:0;
+            top:0;
+            z-index:100;
+        }
+        .shows {
+            cursor:pointer;
+            user-drag:none;
+            user-select:none;
+            -webkit-user-select: none;
+            -webkit-user-drag:none;
+        }
+    script.
+        $(document).ready(function() {
+            $(".goto").bind("click", function (e) {
+                $('#blackout').show()
+
+                window.location.href = $(this).attr('href')
+            });
+            $('#allshows').toggleClass('active')
+            $('table.table').css('display', 'table')
+            $('table.table').DataTable({
+                "paging":   true,
+                "searching": true,
+                "info":     true,
+                'pageLength': 10,
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "order": [[ 1, "asc" ]],
+                "columns":[
+                    { 'width': '1%', 'orderable': false},
+                    { 'width': '98%'},
+                    { 'width': '1%', 'orderable': false}
+                ]
+        } );
+        $('table').on('click', 'td.MAL', function() {
+            ipc.send('data-search', {name: $(this).attr('data-name'), url: $(this).attr('data-search')})
+        })
+        })

@@ -1,0 +1,30 @@
+doctype html
+html
+    include includes/head.pug
+    script(src='//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js')
+    script(src='https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js')
+    script(src='/static/files.js')
+    link(rel='stylesheet', href='https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css')
+    link(rel='stylesheet', href='/static/files.css')
+    body.bg-dark.text-white
+        include includes/topMenu.pug
+        main.container.mt-2
+            .mt-4
+                h1.text-center DOWNLOADED FILES
+                h4 TOTAL SIZE : #{files.total}
+                p.lead #{path}
+                .form-check.form-check-inline.w-100
+                    input#selectall.form-check-input(type="checkbox")
+                    label.form-check-label(for='selectall') select all
+                    .offset-2
+                        button#delete.btn.btn-danger.btn-sm(type='button', title='delete selected files') <i class="far fa-trash-alt"></i>
+                table#filelist.table.table-hover.table-dark.table-striped.table-bordered.table-sm(style="width:100%")
+                    thead
+                        tr.bg-secondary
+                            th Filename
+                            th File Size
+                    tbody
+                        each file in files.list
+                            tr(data-filename=file.filename)
+                                td #{file.filename}
+                                td(data-order=file.size) #{file.sizeH}

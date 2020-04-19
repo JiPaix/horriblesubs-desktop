@@ -1,0 +1,43 @@
+html
+    include includes/head.pug
+    script(src='//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js')
+    script(src='https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js')
+    link(rel='stylesheet', href='https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css')
+    body.bg-dark.text-white
+        main.container.mt-2
+            .mt-4
+                .div
+                    img(src='https://cdn.myanimelist.net/images/mal-logo-xsmall.png?v=180226001')
+                    h3 Search Results
+                table#searchlist.table.table-hover.table-dark.table-striped.table-bordered.table-sm(style="width:100%")
+                    thead
+                        tr.bg-secondary
+                            th &#8195;&#8195;
+                            th Anime
+                            //- th File Size
+                    tbody
+                        each item in items
+                            tr
+                                td
+                                    img.img-fluid(src=item.thumbnail_url)
+                                td
+                                    a(href=href=item.url) #{item.name.replace(/\(\w+\)$/, '')}
+                                    sup.text-muted (#{item.payload.media_type})
+                                    br
+                                    span.text-muted #{item.payload.start_year}
+    pre.bg-light #{JSON.stringify(items, null, 4)}
+
+    script.
+        $(document).ready(() => {
+            $('table').on('click', 'td.MAL', function() {
+                ipc.senc('MAL', $(this).attr('data-href'))
+            })
+            $('table.table').DataTable({
+                "paging": false,
+                "searching": false,
+                "info": false,
+                "order": [
+                    [0, "desc"]
+                ],
+            });
+        })

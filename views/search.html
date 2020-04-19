@@ -1,0 +1,140 @@
+<html><head><script>const ipc = require('electron').ipcRenderer
+const $ = jQuery = require('jquery');
+window.$ = window.jQuery = require('jquery')
+require('popper.js');
+require('bootstrap');
+const toastr = require('toastr')
+const socket = require('socket.io-client')()</script><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"/><link rel="stylesheet" href="/static/main.css"/><script src="https://kit.fontawesome.com/b5b3f033d7.js" crossorigin="anonymous"></script><script>$(document).ready(function() {
+    socket.on('fav-update', function() {
+        $('sup.badge').text(parseInt($('sup.badge').text()) + 1)
+    })
+    $('#dlperc').hide()
+    $('#exit').on('click', function() {
+        ipc.send('please-quit')
+    })
+})</script></head><script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script><script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script><link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css"/><body class="bg-dark text-white"><main class="container mt-2"><div class="mt-4"><div class="div"><img src="https://cdn.myanimelist.net/images/mal-logo-xsmall.png?v=180226001"/><h3>Search Results</h3></div><table class="table table-hover table-dark table-striped table-bordered table-sm" id="searchlist" style="width:100%"><thead><tr class="bg-secondary"><th>&#8195;&#8195;</th><th>Anime</th></tr></thead><tbody><tr><td><img class="img-fluid" src="https://cdn.myanimelist.net/r/116x76/images/anime/10/86858.jpg?s=501a0936167b9648ce751dcf159fbef9"/></td><td><a href="https://myanimelist.net/anime/34052/100_Pascal-sensei_TV">100% Pascal-sensei </a><sup class="text-muted">(TV)</sup><br/><span class="text-muted">2017</span></td></tr><tr><td><img class="img-fluid" src="https://cdn.myanimelist.net/r/116x76/images/anime/11/85447.jpg?s=2d26751182399b3d76e2b2706e146b21"/></td><td><a href="https://myanimelist.net/anime/35447/100_Pascal-sensei">100% Pascal-sensei</a><sup class="text-muted">(ONA)</sup><br/><span class="text-muted">2016</span></td></tr><tr><td><img class="img-fluid" src="https://cdn.myanimelist.net/r/116x76/images/anime/2/86468.jpg?s=04455a7a7de7862973651c60b6d52241"/></td><td><a href="https://myanimelist.net/anime/32901/Eromanga-sensei">Eromanga-sensei</a><sup class="text-muted">(TV)</sup><br/><span class="text-muted">2017</span></td></tr><tr><td><img class="img-fluid" src="https://cdn.myanimelist.net/r/116x76/images/anime/5/6559.jpg?s=43073b4fee9df090caa96fe20d8d0404"/></td><td><a href="https://myanimelist.net/anime/2605/Sayonara_Zetsubou_Sensei">Sayonara Zetsubou Sensei</a><sup class="text-muted">(TV)</sup><br/><span class="text-muted">2007</span></td></tr><tr><td><img class="img-fluid" src="https://cdn.myanimelist.net/r/116x76/images/anime/1301/93586.jpg?s=6e0744683b356418573b7d56d440cb14"/></td><td><a href="https://myanimelist.net/anime/37450/Seishun_Buta_Yarou_wa_Bunny_Girl_Senpai_no_Yume_wo_Minai">Seishun Buta Yarou wa Bunny Girl Senpai no Yume wo Minai</a><sup class="text-muted">(TV)</sup><br/><span class="text-muted">2018</span></td></tr><tr><td><img class="img-fluid" src="https://cdn.myanimelist.net/r/116x76/images/anime/10/83452.jpg?s=02684d454274b627041e4e72a6c799e8"/></td><td><a href="https://myanimelist.net/anime/34389/Koro-sensei_Quest">Koro-sensei Quest!</a><sup class="text-muted">(ONA)</sup><br/><span class="text-muted">2016</span></td></tr><tr><td><img class="img-fluid" src="https://cdn.myanimelist.net/r/116x76/images/anime/13/5241.jpg?s=13f810641cba12bb3dc80487d381e2a2"/></td><td><a href="https://myanimelist.net/anime/195/Onegai☆Teacher">Onegai☆Teacher</a><sup class="text-muted">(TV)</sup><br/><span class="text-muted">2002</span></td></tr></tbody></table></div></main></body><pre class="bg-light">[
+    {
+        &quot;id&quot;: 34052,
+        &quot;type&quot;: &quot;anime&quot;,
+        &quot;name&quot;: &quot;100% Pascal-sensei (TV)&quot;,
+        &quot;url&quot;: &quot;https://myanimelist.net/anime/34052/100_Pascal-sensei_TV&quot;,
+        &quot;image_url&quot;: &quot;https://cdn.myanimelist.net/r/116x180/images/anime/10/86858.jpg?s=1bcf2beb6e6cb727ad766ac5755971f3&quot;,
+        &quot;thumbnail_url&quot;: &quot;https://cdn.myanimelist.net/r/116x76/images/anime/10/86858.jpg?s=501a0936167b9648ce751dcf159fbef9&quot;,
+        &quot;payload&quot;: {
+            &quot;media_type&quot;: &quot;TV&quot;,
+            &quot;start_year&quot;: 2017,
+            &quot;aired&quot;: &quot;Apr 15, 2017 to Dec 16, 2017&quot;,
+            &quot;score&quot;: &quot;5.77&quot;,
+            &quot;status&quot;: &quot;Finished Airing&quot;
+        },
+        &quot;es_score&quot;: 3.5552287
+    },
+    {
+        &quot;id&quot;: 35447,
+        &quot;type&quot;: &quot;anime&quot;,
+        &quot;name&quot;: &quot;100% Pascal-sensei&quot;,
+        &quot;url&quot;: &quot;https://myanimelist.net/anime/35447/100_Pascal-sensei&quot;,
+        &quot;image_url&quot;: &quot;https://cdn.myanimelist.net/r/116x180/images/anime/11/85447.jpg?s=570495d21291aa0a53a2cfa03b13fd11&quot;,
+        &quot;thumbnail_url&quot;: &quot;https://cdn.myanimelist.net/r/116x76/images/anime/11/85447.jpg?s=2d26751182399b3d76e2b2706e146b21&quot;,
+        &quot;payload&quot;: {
+            &quot;media_type&quot;: &quot;ONA&quot;,
+            &quot;start_year&quot;: 2016,
+            &quot;aired&quot;: &quot;Oct 15, 2016 to Mar 15, 2017&quot;,
+            &quot;score&quot;: &quot;N/A&quot;,
+            &quot;status&quot;: &quot;Finished Airing&quot;
+        },
+        &quot;es_score&quot;: 3.3229504
+    },
+    {
+        &quot;id&quot;: 32901,
+        &quot;type&quot;: &quot;anime&quot;,
+        &quot;name&quot;: &quot;Eromanga-sensei&quot;,
+        &quot;url&quot;: &quot;https://myanimelist.net/anime/32901/Eromanga-sensei&quot;,
+        &quot;image_url&quot;: &quot;https://cdn.myanimelist.net/r/116x180/images/anime/2/86468.jpg?s=5f3d5926b44b29d126ed849c6a235da5&quot;,
+        &quot;thumbnail_url&quot;: &quot;https://cdn.myanimelist.net/r/116x76/images/anime/2/86468.jpg?s=04455a7a7de7862973651c60b6d52241&quot;,
+        &quot;payload&quot;: {
+            &quot;media_type&quot;: &quot;TV&quot;,
+            &quot;start_year&quot;: 2017,
+            &quot;aired&quot;: &quot;Apr 9, 2017 to Jun 25, 2017&quot;,
+            &quot;score&quot;: &quot;6.68&quot;,
+            &quot;status&quot;: &quot;Finished Airing&quot;
+        },
+        &quot;es_score&quot;: 0.55596703
+    },
+    {
+        &quot;id&quot;: 2605,
+        &quot;type&quot;: &quot;anime&quot;,
+        &quot;name&quot;: &quot;Sayonara Zetsubou Sensei&quot;,
+        &quot;url&quot;: &quot;https://myanimelist.net/anime/2605/Sayonara_Zetsubou_Sensei&quot;,
+        &quot;image_url&quot;: &quot;https://cdn.myanimelist.net/r/116x180/images/anime/5/6559.jpg?s=1c71318d77b5aa3b720b331342340673&quot;,
+        &quot;thumbnail_url&quot;: &quot;https://cdn.myanimelist.net/r/116x76/images/anime/5/6559.jpg?s=43073b4fee9df090caa96fe20d8d0404&quot;,
+        &quot;payload&quot;: {
+            &quot;media_type&quot;: &quot;TV&quot;,
+            &quot;start_year&quot;: 2007,
+            &quot;aired&quot;: &quot;Jul 8, 2007 to Sep 23, 2007&quot;,
+            &quot;score&quot;: &quot;7.93&quot;,
+            &quot;status&quot;: &quot;Finished Airing&quot;
+        },
+        &quot;es_score&quot;: 0.37305573
+    },
+    {
+        &quot;id&quot;: 37450,
+        &quot;type&quot;: &quot;anime&quot;,
+        &quot;name&quot;: &quot;Seishun Buta Yarou wa Bunny Girl Senpai no Yume wo Minai&quot;,
+        &quot;url&quot;: &quot;https://myanimelist.net/anime/37450/Seishun_Buta_Yarou_wa_Bunny_Girl_Senpai_no_Yume_wo_Minai&quot;,
+        &quot;image_url&quot;: &quot;https://cdn.myanimelist.net/r/116x180/images/anime/1301/93586.jpg?s=d90af86ca379654f614de94a2e09ef8c&quot;,
+        &quot;thumbnail_url&quot;: &quot;https://cdn.myanimelist.net/r/116x76/images/anime/1301/93586.jpg?s=6e0744683b356418573b7d56d440cb14&quot;,
+        &quot;payload&quot;: {
+            &quot;media_type&quot;: &quot;TV&quot;,
+            &quot;start_year&quot;: 2018,
+            &quot;aired&quot;: &quot;Oct 4, 2018 to Dec 27, 2018&quot;,
+            &quot;score&quot;: &quot;8.42&quot;,
+            &quot;status&quot;: &quot;Finished Airing&quot;
+        },
+        &quot;es_score&quot;: 0.28708708
+    },
+    {
+        &quot;id&quot;: 34389,
+        &quot;type&quot;: &quot;anime&quot;,
+        &quot;name&quot;: &quot;Koro-sensei Quest!&quot;,
+        &quot;url&quot;: &quot;https://myanimelist.net/anime/34389/Koro-sensei_Quest&quot;,
+        &quot;image_url&quot;: &quot;https://cdn.myanimelist.net/r/116x180/images/anime/10/83452.jpg?s=7a1442e7ac0b802d10d5738400974cb8&quot;,
+        &quot;thumbnail_url&quot;: &quot;https://cdn.myanimelist.net/r/116x76/images/anime/10/83452.jpg?s=02684d454274b627041e4e72a6c799e8&quot;,
+        &quot;payload&quot;: {
+            &quot;media_type&quot;: &quot;ONA&quot;,
+            &quot;start_year&quot;: 2016,
+            &quot;aired&quot;: &quot;Dec 23, 2016 to Mar 10, 2017&quot;,
+            &quot;score&quot;: &quot;7.19&quot;,
+            &quot;status&quot;: &quot;Finished Airing&quot;
+        },
+        &quot;es_score&quot;: 0.24506566
+    },
+    {
+        &quot;id&quot;: 195,
+        &quot;type&quot;: &quot;anime&quot;,
+        &quot;name&quot;: &quot;Onegai☆Teacher&quot;,
+        &quot;url&quot;: &quot;https://myanimelist.net/anime/195/Onegai☆Teacher&quot;,
+        &quot;image_url&quot;: &quot;https://cdn.myanimelist.net/r/116x180/images/anime/13/5241.jpg?s=a0772428be6479d7bc2262c476855883&quot;,
+        &quot;thumbnail_url&quot;: &quot;https://cdn.myanimelist.net/r/116x76/images/anime/13/5241.jpg?s=13f810641cba12bb3dc80487d381e2a2&quot;,
+        &quot;payload&quot;: {
+            &quot;media_type&quot;: &quot;TV&quot;,
+            &quot;start_year&quot;: 2002,
+            &quot;aired&quot;: &quot;Jan 10, 2002 to Mar 28, 2002&quot;,
+            &quot;score&quot;: &quot;7.23&quot;,
+            &quot;status&quot;: &quot;Finished Airing&quot;
+        },
+        &quot;es_score&quot;: 0.23142818
+    }
+]</pre><script>$(document).ready(() => {
+    $('table').on('click', 'td.MAL', function() {
+        ipc.senc('MAL', $(this).attr('data-href'))
+    })
+    $('table.table').DataTable({
+        "paging": false,
+        "searching": false,
+        "info": false,
+        "order": [
+            [0, "desc"]
+        ],
+    });
+})</script></html>

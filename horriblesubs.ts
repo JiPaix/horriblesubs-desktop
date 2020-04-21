@@ -219,15 +219,13 @@ export default class horriblesubs extends searcher {
             console.log(e.message)
         }
     }
-    findFile(show: Shows | { ep: string; name: string; bot: string; pack: string }) {
-        try {
+    findFile(show: Shows | { ep: string; name: string; bot: string; pack: string|number }) {
             let b = fs.readdirSync(this.path).filter(file => file.replace(/[^a-zA-Z ]/g, "").includes(show.name.replace(/[^a-zA-Z ]/g, "")))
             let c = b.filter(file => !file.includes('.vtt')).filter(file => !file.includes('.srt'))
-            return c.filter(file => file.includes(` ${show.ep} `))
-        } catch (e) {
-            console.log(e.message)
-        }
-
+            let d = c.filter(file => file.includes(` ${show.ep} `))
+            if(d.length) {
+                return c.filter(file => file.includes(` ${show.ep} `))
+            }
     }
     deleteFiles(files: string[]) {
         try {

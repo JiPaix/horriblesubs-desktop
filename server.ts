@@ -6,6 +6,7 @@ import * as fs from 'fs'
 import * as execa from 'execa'
 import * as ass2vtt from 'ass-to-vtt'
 import * as http from 'http'
+import { Request, Response, NextFunction } from 'express';
 
 const express = require('express')
 const app = express()
@@ -46,21 +47,21 @@ export default class server extends horriblesubs {
 
     }
     routes() {
-        app.get('/', (_req, res) => {
+        app.get('/', (_req: Request, res: Response) => {
             res.render('index', {
                 shows: this.displayIndex(),
                 follows: this.favIds(),
                 towatch: this.whatToWatch()
             })
         })
-        app.get('/fav', (_req, res) => {
+        app.get('/fav', (_req: Request, res: Response) => {
             res.render('fav', {
                 towatch: this.whatToWatch(),
                 shows: this.whatToWatch(true),
                 hasFav: this.favList() || false
             })
         })
-        app.get('/shows', (_req, res) => {
+        app.get('/shows', (_req: Request, res: Response) => {
             this.getAllshows().then(shows => {
                 res.render('allshows', {
                     towatch: this.whatToWatch(),
@@ -68,17 +69,14 @@ export default class server extends horriblesubs {
                 })
             })
         })
-        app.get('/files', (_req, res) => {
+        app.get('/files', (_req: Request, res: Response) => {
             res.render('files', {
                 towatch: this.whatToWatch(),
                 files: this.showFiles(),
                 path: this.path
             })
         })
-        app.get('/shows/:id*', async (req, res) => {
-                console.log(`__________`)
-                console.log(req.params.id)
-                console.log(`__________`)
+        app.get('/shows/:id*', async (req: Request, res: Response) => {
                 let show = await this.displayShow(req.params.id)
                 let lastwatched = this.findLastWatched(show.id)
                 let towatch = this.whatToWatch()
@@ -101,9 +99,9 @@ export default class server extends horriblesubs {
         socket.on('unfollow', (id: number) => {
             this.follow(id, true)
         })
-        socket.on('watch', (req: { ep: string; name: string; bot: string; pack: string }) => {
+        socket.on('watch', (req: { ep: string; name: string; bot: string; pack: string|number }) => {
             const file = this.findFile(req)
-            if (file.length > 0) {
+            if (typeof file !== 'undefined') {
                 socket.emit('watch', {
                     file: file[0]
                 })
@@ -113,7 +111,7 @@ export default class server extends horriblesubs {
         })
         socket.on('watchFromIndex', (req: Shows) => {
             let file = this.findFile(req)
-            if (file.length > 0) {
+            if (typeof file !== 'undefined') {
                 socket.emit('watch', {
                     file: file[0]
                 })
@@ -131,7 +129,7 @@ export default class server extends horriblesubs {
     xdccEvents(socket: { on?: any; emit: any }) {
         this.xdccJS.on('downloaded', fileInfo => {
             socket.emit('downloading', 100)
-            if (/[^.]+$/.exec(fileInfo.file)[0] === 'mkv') {
+            if (path.extname(fileInfo.file) === 'mkv') {
                 this.mkv2vtt(fileInfo.file, () => {
                     socket.emit('watch', fileInfo)
                 })
@@ -173,12 +171,12 @@ export default class server extends horriblesubs {
         cb()
     }
     private xdccDownloadAll(show: Show, socket: { emit: (arg0: string) => void }) {
-        let bots = []
-        show.links.forEach(element => {
+        let bots: Array<{ name: string, pack: number[]}> = []
+        show.links!.forEach(element => {
             let ep = element.ep
             for (let index = 0; index < element.bots.length; index++) {
                 const bot = element.bots[index];
-                let match = bots.filter(x => x.name === bot.bot).length
+                let match = bots.filter((x: { name: string }) => x.name === bot.bot).length
                 if (match === 0) {
                     bots.push({
                         name: bot.bot,
@@ -190,7 +188,7 @@ export default class server extends horriblesubs {
                 }
             }
         })
-        let theOne = bots.find(el => el.pack.length === show.links.length)
+        let theOne = bots.find(el => el.pack.length === show.links!.length)
         if (theOne) {
             this.xdccJS.downloadBatch(theOne.name, theOne.pack.join())
         } else {

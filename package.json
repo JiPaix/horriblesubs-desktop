@@ -2,11 +2,14 @@
   "name": "horriblesubs-desktop",
   "version": "0.0.1",
   "description": "",
-  "main": "main.js",
+  "main": "./dist/main.js",
+  "types": "./dist/main.d.ts",
+  "files": [
+    "/dist"
+  ],
   "scripts": {
-    "start-linux" : "./node_modules/typescript/bin/tsc *.ts && ./node_modules/electron/dist/electron .",
-    "start": "./node_modules/typescript/bin/tsc *.ts && ./node_modules/electron/dist/electron.exe .",
-
+    "start-linux": "./node_modules/rimraf/bin.js dist && ./node_modules/typescript/bin/tsc -p tsconfig.json && ./node_modules/electron/dist/electron dist",
+    "start": "./node_modules/rimraf/ dist && ./node_modules/typescript/bin/tsc -p tsconfig.json && ./node_modules/electron/dist/electron.exe dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "JiPaix",
@@ -35,6 +38,7 @@
     "pug": "^2.0.4",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.8",
+    "rimraf": "^3.0.2",
     "shell-quote": "^1.7.2",
     "socket.io": "^2.3.0",
     "srt-to-vtt": "^1.1.3",

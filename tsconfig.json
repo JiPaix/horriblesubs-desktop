@@ -31,7 +31,7 @@
         /* Strict Type-Checking Options */
         "strict": true,
         /* Enable all strict type-checking options. */
-        // "noImplicitAny": true,                 /* Raise error on expressions and declarations with an implied 'any' type. */
+        "noImplicitAny": true,                 /* Raise error on expressions and declarations with an implied 'any' type. */
         // "strictNullChecks": true,              /* Enable strict null checks. */
         // "strictFunctionTypes": true,           /* Enable strict checking of function types. */
         // "strictBindCallApply": true,           /* Enable strict 'bind', 'call', and 'apply' methods on functions. */
@@ -51,7 +51,7 @@
         // "baseUrl": "./",                       /* Base directory to resolve non-absolute module names. */
         // "paths": {},                           /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
         // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
-        "typeRoots": ["@types", "node_modules/@types"],
+        "typeRoots": ["./@types", "./node_modules/@types"],
         /* List of folders to include type definitions from. */
         // "types": [],                           /* Type declaration files to be included in compilation. */
         "allowSyntheticDefaultImports": true,

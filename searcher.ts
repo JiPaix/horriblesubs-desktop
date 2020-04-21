@@ -62,7 +62,7 @@ export default class searcher extends fetcher {
                     let ep = $(el).parent().children('a').children('strong').text()
                     let link = $(el).children('.rls-link').children('.hs-xdcc-link').children('a').last().prev('a').attr('href')
                     if (typeof ep !== 'undefined' && typeof link !== 'undefined') {
-                        res.push({ ep: parseFloat(ep.replace(/-|/g, '.')), link: link })
+                        res.push({ ep: parseFloat(ep.replace(/-|,/g, '.')), link: link })
                     }
                 })
                 if (!res.length) {

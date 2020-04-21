@@ -1,25 +1,22 @@
-.div.w-100.bg-light(style='-webkit-app-region: drag, max-height:1px') &#8195;
-nav.navbar.navbar-expand.navbar-dark.bg-darker.sticky-top
-  a.navbar-brand(href='/') <i class="fas fa-home"></i>
+nav.navbar.navbar-expand.navbar-dark.bg-darker.sticky-top.drag
+  a.nodrag.navbar-brand(href='/') <i class="fas fa-home"></i>
   button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarSupportedContent', aria-controls='navbarSupportedContent', aria-expanded='false', aria-label='Toggle navigation')
     span.navbar-toggler-icon
   #navbarSupportedContent.collapse.navbar-collapse
-    ul.navbar-nav.mr-auto
+    ul.nodrag.navbar-nav.mr-auto
       li.nav-item.dropdown.ml-5
-        a#fav.nav-link.scale(title='Favorites',href='/fav', role='button')
-          | <i class="fas fa-bookmark"></i>
-      li.nav-item.dropdown.ml-5
-        a#allshows.nav-link.scale(title='All Animes',href='/shows', role='button')
+        a#fav.nav-link(title='Favorites',href='/fav', role='button')
+          if typeof towatch !== 'undefined'
+            | <i class="fas fa-bookmark"></i><sup class="badge badge-danger" style="margin-left:-1px;">#{towatch.length}</sup>
+          else
+            | <i class="fas fa-bookmark"></i><sup class="badge badge-light">0</sup>
+      li.nav-item.dropdown.ml-4
+        a#allshows.nav-link(title='All Animes',href='/shows', role='button')
           | <i class="fas fa-search"></i>
       li.nav-item.dropdown.ml-5
-        a#hardrive.nav-link.scale(title='Files',href='/files', role='button')
+        a#hardrive.nav-link(title='Files',href='/files', role='button')
           | <i class="fas fa-hdd"></i>
-    ul.navbar-nav.ml-auto
-      a#fav.nav-link.scale.mr-5(title='Unwatched episodes from favorites', href='/fav', role='button')
-        if typeof towatch !== 'undefined'
-          | <i class="fas fa-bell"></i><sup class="badge badge-danger">#{towatch.length}</sup>
-        else
-          | <i class="fas fa-bell"></i><sup class="badge badge-light">0</sup>
+    ul.nodrag.navbar-nav.ml-auto
       li.nav-item.dropdown
         a#import.nav-link.dropdown-toggle(href='#', role='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
           | <i class="fas fa-ellipsis-v"></i>
@@ -144,4 +141,14 @@ style.
   .form-inline.mr-auto.ml-auto > input.form-control {
    font-size: inherit;
     font-weight: inherit; 
+  }
+  .drag {
+    -webkit-user-select: none;
+    -webkit-app-region: drag;
+  }
+  .nodrag {
+    -webkit-app-region: no-drag;
+  }
+  ul.nodrag.navbar-nav.mr-auto {
+    transform: translate(0px, 3px);
   }

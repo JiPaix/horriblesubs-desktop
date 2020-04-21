@@ -1,40 +1,37 @@
-doctype html
-html
-    include includes/head.pug
-    script(src='/static/index.js')
-    link(rel='stylesheet', href='/static/index.css')
-    body.bg-dark.text-white
-        include includes/topMenu.pug
-        main.container-fluid.mt-2
-            .row.player
-                .col-12.mt-1
-                    video.embed-responsive.embed-responsive-16by9(controls)
-                        source#player(src='', type="video/mp4")
-                        track#track(src='', kind='subtitles', srclang='en', label="English")
-            #index.row.mt-4.px-5
-                each show in shows
-                    - show.showLink = show.showLink.replace('/shows/', '')
-                    .col-2.px-1.mb-4.text-center.shows(title=show.name)
-                        if follows.includes(show.id)
-                            a.text-decoration-none.card.text-white(style="min-height:100%;border: 1px solid rgb(0, 0, 0);-webkit-box-shadow: 5px 5px 5px 0px rgba(255,255,255,0.5);transition-duration: 0.3s;" data=JSON.stringify(show))
-                                .embed-responsive.embed-responsive-1by1(style="padding-top: 50%;")
-                                    img(src=show.img, style="object-fit:cover").card-image-top.embed-responsive-item
-                                .card-body.bg-dark.p-1
-                                    h5.card-title(style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;").mb-1 #{show.name}
-                                    small.card-text.text-white-50 Episode: #{show.ep}
-                        else
-                            a.text-decoration-none.card.text-white(style="min-height:100%;border: 1px solid rgb(0, 0, 0);-webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);transition-duration: 0.3s;" data=JSON.stringify(show))
-                                .embed-responsive.embed-responsive-1by1(style="padding-top: 50%;")
-                                    img(src=show.img, style="object-fit:cover").card-image-top.embed-responsive-item
-                                .card-body.bg-dark.p-1
-                                    h5.card-title(style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;").mb-1 #{show.name}
-                                    small.card-text.text-white-50 Episode: #{show.ep}
-                .col-2.px-1.mb-4.text-center.d-none
-                    a.text-decoration-none.text-white.card(style="min-height:100%;border: 1px solid rgb(0, 0, 0);-webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);transition-duration: 0.3s")
-                        .embed-responsive.embed-responsive-1by1(style="padding-top: 50%;")
-                            img(style="object-fit:cover").card-image-top.embed-responsive-item
-                        .card-body.bg-dark.p-1
-                            h5.card-title(style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;").mb-1 empty
-                            small.card-text.text-white-50 Episode: empty
-    script.
-        let allFollows = #{JSON.stringify(follows)}
+include includes/head.pug
+script(src='/static/index.js')
+link(rel='stylesheet', href='/static/index.css')
+body.bg-dark.text-white(style='overflow:hidden')
+    include includes/topMenu.pug
+    main.container-fluid(style='position:absolute;overflow-y:scroll;bottom:0;top:30px;')
+        .row.player.mt-2
+            .col-12.mt-1
+                video.embed-responsive.embed-responsive-16by9(controls)
+                    source#player(src='', type="video/mp4")
+                    track#track(src='', kind='subtitles', srclang='en', label="English")
+        #index.row.mt-4.px-5
+            each show in shows
+                .col-2.px-1.mb-4.text-center.shows(title=show.name)
+                    if follows.includes(show.id)
+                        a.text-decoration-none.card.text-white(style="min-height:100%;border: 1px solid rgb(0, 0, 0);-webkit-box-shadow: 5px 5px 5px 0px rgba(255,255,255,0.5);transition-duration: 0.3s;" data=JSON.stringify(show))
+                            .embed-responsive.embed-responsive-1by1(style="padding-top: 50%;")
+                                img(src=show.img, style="object-fit:cover").card-image-top.embed-responsive-item
+                            .card-body.bg-dark.p-1
+                                h5.card-title(style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;").mb-1 #{show.name}
+                                small.card-text.text-white-50 Episode: #{show.ep}
+                    else
+                        a.text-decoration-none.card.text-white(style="min-height:100%;border: 1px solid rgb(0, 0, 0);-webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);transition-duration: 0.3s;" data=JSON.stringify(show))
+                            .embed-responsive.embed-responsive-1by1(style="padding-top: 50%;")
+                                img(src=show.img, style="object-fit:cover").card-image-top.embed-responsive-item
+                            .card-body.bg-dark.p-1
+                                h5.card-title(style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;").mb-1 #{show.name}
+                                small.card-text.text-white-50 Episode: #{show.ep}
+            .col-2.px-1.mb-4.text-center.d-none
+                a.text-decoration-none.text-white.card(style="min-height:100%;border: 1px solid rgb(0, 0, 0);-webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);transition-duration: 0.3s")
+                    .embed-responsive.embed-responsive-1by1(style="padding-top: 50%;")
+                        img(style="object-fit:cover").card-image-top.embed-responsive-item
+                    .card-body.bg-dark.p-1
+                        h5.card-title(style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;").mb-1 empty
+                        small.card-text.text-white-50 Episode: empty
+script.
+    let allFollows = #{JSON.stringify(follows)}

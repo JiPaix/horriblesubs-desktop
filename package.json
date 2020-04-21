@@ -4,7 +4,9 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "./node_modules/typescript/bin/tsc *.ts && ./node_modules/electron/dist/electron .",
+    "start-linux" : "./node_modules/typescript/bin/tsc *.ts && ./node_modules/electron/dist/electron .",
+    "start": "./node_modules/typescript/bin/tsc *.ts && ./node_modules/electron/dist/electron.exe .",
+
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "JiPaix",
@@ -28,6 +30,7 @@
     "jquery": "^3.5.0",
     "lodash": "^4.17.15",
     "lowdb": "^1.0.0",
+    "mkv-subtitle-extractor": "^1.1.1",
     "popper.js": "^1.16.1",
     "pug": "^2.0.4",
     "request": "^2.88.2",

@@ -23,34 +23,61 @@ export default class fetcher extends event {
     async fetchIndex() {
         const apiMethod: string = '?method=getlatest'
         let currentJob: string[] = []
-        const html = await rp(this.API + apiMethod)
-        const $ = cheerio.load(html)
-        $('a').each((i, el) => {
-            const currentLink = $(el).attr('href');
-            if (!this.homeFetch.includes(currentLink)) {
-                currentJob.push(currentLink);
+        try {
+            const html = await rp(this.API + apiMethod)
+            const $ = cheerio.load(html)
+            $('a').each((_i, el) => {
+                const currentLink = $(el).attr('href');
+                if(typeof currentLink !== 'undefined') {
+                    if (!this.homeFetch.includes(currentLink)) {
+                        currentJob.push(currentLink);
+                    }
+                }
+            })
+            if (currentJob.length) {
+                this.homeFetch.concat(currentJob)
+                for (let job of currentJob) {
+                    if(job !== null) {
+                        const res = await this.fetchShow(this.homePage + job)
+                        if(typeof res !== 'undefined') {
+                            const link = await this.getShow(res.id)
+                            if(typeof link !== 'undefined') {
+                                const xdcc = await this.xdccList(link)
+                                if(typeof xdcc !== 'undefined') {
+                                    if(job !== null) {
+                                        let tmp = job.match(/(#\d*$)/g)
+                                        if(tmp !== null) {
+                                            let ep:string | number = tmp[0].replace('#', '').replace('-', '.')
+                                            ep = parseFloat(ep)
+                                            if (typeof ep === 'number') {
+                                                this.shows.push({
+                                                    id: res.id,
+                                                    name: res.name,
+                                                    ep: ep,
+                                                    showLink: job.replace(/#\d*(-\d*)*$/, '').replace(/\/?shows\//g, ''),
+                                                    img: res.img,
+                                                    desc: res.desc,
+                                                    quality: xdcc,
+                                                    date: new Date()
+                                                })
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+    
+                }
             }
-        })
-        if (currentJob.length > 0) {
-            this.homeFetch.concat(currentJob)
-            for (let job of currentJob) {
-                const res = await this.fetchShow(this.homePage + job)
-                const link = await this.getShow(res.id)
-                const xdcc = await this.xdccList(link)
-                this.shows.push({
-                    id: res.id,
-                    name: res.name,
-                    ep: job.match(/(#\d*$)/g)[0].replace('#', '').replace('-', '.'),
-                    showLink: job.replace(/#\d*(-\d*)*$/, ''),
-                    img: res.img,
-                    desc: res.desc,
-                    quality: xdcc,
-                    date: new Date()
-                })
-            }
+        }catch(e) {
+            console.log(e.message)
+            console.log('THIS KIND OF')
+
         }
+
     }
-    async xdccList(url: string): Promise<Shows["quality"]> {
+    async xdccList(url: string) {
         url = url.replace('?search=', 'search.php?t=')
         let file = url.replace('https://xdcc.horriblesubs.info/search.php?t=', '')
         try {
@@ -81,44 +108,53 @@ export default class fetcher extends event {
                 throw EvalError(`couldn't eval: '${html}' from : ${url}`)
             }
         } catch (e) {
-            if (e instanceof EvalError) {
-                console.log(e)
 
-            } else {
-                console.log(e)
-
-            }
         }
     }
-    async fetchShow(url: string): Promise<BasicShows> {
+    async fetchShow(url: string) {
         try {
             const html = await rp(url, { timeout: 10000 })
             const $ = cheerio.load(html)
-            let show: { id: number, name: string, img: string, desc: string }
-            const id = parseInt($('script').filter((i, elem) => {
-                return $(elem).html().includes('var hs_showid')
-            }).html().replace(/\D/g, ''))
-            let img = $('.series-image > img').attr('src').replace(this.homePage, '')
-            img = this.homePage + img
-            return {
-                id: id,
-                name: $('h1.entry-title').text(),
-                img: img,
-                desc: $('.series-desc > p').text()
+            let filter = $('script').filter((_index, elem) => {
+                return $(elem).html()!.includes('var hs_showid')
+            }).html()
+            if(filter !== null) {
+                const id = parseInt(filter.replace(/\D/g, ''))
+                if(typeof id !== 'number') {
+                    throw Error(`fetchShow: couldn't get id`)
+                }
+                let findImg = $('.series-image > img').attr('src')
+                if(typeof findImg !== 'undefined') {
+                    let img = findImg.replace(this.homePage, '')
+                    img = this.homePage+img
+                    return {
+                        id: id,
+                        name: $('h1.entry-title').text(),
+                        img: img,
+                        desc: $('.series-desc > p').text()
+                    }
+                }
+            } else {
+                throw Error(`error at fetchShow(): couldn't get 'id'`)
             }
         } catch (e) {
-
+            console.log(`error when going ${url}`)
         }
     }
-    async getShow(id: number): Promise<string> {
+    async getShow(id: number) {
         const apiMethod: string = '?method=getshows&type=show&showid='
         try {
             const html = await rp(this.API + apiMethod + id, { timeout: 10000 })
             const $ = cheerio.load(html)
-            return $('.rls-links-container').first().children('.rls-link').children('.hs-xdcc-link').children('a').last().prev('a').attr('href')
-
+            const show = $('.rls-links-container').first().children('.rls-link').children('.hs-xdcc-link').children('a').last().prev('a').attr('href')
+            if(typeof show !== 'undefined') {
+                return show
+            } else {
+                throw Error(`getShow() couldn't get 'show'`)
+            }
+            
         } catch (e) {
-
+            
         }
     }
     async getAllshows() {
@@ -126,15 +162,22 @@ export default class fetcher extends event {
             const res = await rp(this.homePage + '/shows/')
             const $ = cheerio.load(res)
             const results: Array<{ name: string, url: string }> = []
-            $('.ind-show').each((i, el) => {
-                results.push({
-                    name: $(el).children('a').text(),
-                    url: $(el).children('a').attr('href')
-                })
+            $('.ind-show').each((_i, el) => {
+                const uri = $(el).children('a').attr('href')
+                const name = $(el).children('a').text()
+                if(typeof uri !== 'undefined' && name.length && uri.length) {
+                    results.push({
+                        name: name,
+                        url: uri
+                    })
+                }
             })
             return results
         } catch (e) {
 
         }
+        throw Error("uncatched error at getAllshows()");
     }
+
+    
 }

@@ -1,6 +1,7 @@
 import XDCC from 'xdccjs'
 import horriblesubs from './horriblesubs'
 import { Shows, Show, Params } from './interfaces'
+import * as path from 'path'
 import * as fs from 'fs'
 import * as execa from 'execa'
 import * as ass2vtt from 'ass-to-vtt'
@@ -45,21 +46,21 @@ export default class server extends horriblesubs {
 
     }
     routes() {
-        app.get('/', (req, res) => {
+        app.get('/', (_req, res) => {
             res.render('index', {
                 shows: this.displayIndex(),
                 follows: this.favIds(),
                 towatch: this.whatToWatch()
             })
         })
-        app.get('/fav', (req, res) => {
+        app.get('/fav', (_req, res) => {
             res.render('fav', {
                 towatch: this.whatToWatch(),
                 shows: this.whatToWatch(true),
                 hasFav: this.favList() || false
             })
         })
-        app.get('/shows', (req, res) => {
+        app.get('/shows', (_req, res) => {
             this.getAllshows().then(shows => {
                 res.render('allshows', {
                     towatch: this.whatToWatch(),
@@ -67,22 +68,27 @@ export default class server extends horriblesubs {
                 })
             })
         })
-        app.get('/files', (req, res) => {
+        app.get('/files', (_req, res) => {
             res.render('files', {
                 towatch: this.whatToWatch(),
                 files: this.showFiles(),
                 path: this.path
             })
         })
-        app.get('/shows/:id*', (req, res) => {
-            this.displayShow(req.params.id).then(show => {
+        app.get('/shows/:id*', async (req, res) => {
+                console.log(`__________`)
+                console.log(req.params.id)
+                console.log(`__________`)
+                let show = await this.displayShow(req.params.id)
+                let lastwatched = this.findLastWatched(show.id)
+                let towatch = this.whatToWatch()
+                let follows= this.isFav(show.id)
                 res.render('shows', {
                     show: show,
-                    lastwatched: this.findLastWatched(show.id) || [],
-                    towatch: this.whatToWatch(),
-                    follows: this.isFav(show.id)
+                    lastwatched: lastwatched,
+                    towatch: towatch,
+                    follows: follows
                 })
-            })
         })
     }
     IO(socket: { on?: any; emit: any }) {
@@ -151,10 +157,19 @@ export default class server extends horriblesubs {
         })
     }
     private mkv2vtt(file: string, cb: () => void) {
-        execa.sync('mkvextract', ['tracks', `dl/${file}`, `2:dl/${file}.srt`])
-        fs.createReadStream(`./dl/${file}.srt`)
+        let normalizedEXT = path.normalize(`${this.path}/${file}`)
+        let normalizedNoEXT = path.normalize(`${this.path}/${path.parse(file).name}`)
+        if(process.platform === 'win32') {
+            execa.sync('mkvextract.exe', ['tracks', `${normalizedEXT}`, `2:${normalizedNoEXT}.ass`])
+        } else if(process.platform === 'linux') {
+            execa.sync('mkvextract', ['tracks', `${normalizedEXT}`, `2:${normalizedNoEXT}.ass`])
+        } else if(process.platform === 'darwin') {
+            execa.sync('mkvextract-darwin', ['tracks', `${normalizedEXT}`, `2:${normalizedNoEXT}.ass`])
+        }
+        fs.createReadStream(path.normalize(`${normalizedNoEXT}.ass`))
             .pipe(ass2vtt())
-            .pipe(fs.createWriteStream(`./dl/${file}.vtt`))
+            .pipe(fs.createWriteStream(path.normalize(`${normalizedNoEXT}.vtt`)))
+        fs.unlinkSync(`${normalizedNoEXT}.ass`)
         cb()
     }
     private xdccDownloadAll(show: Show, socket: { emit: (arg0: string) => void }) {

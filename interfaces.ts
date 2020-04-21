@@ -1,7 +1,7 @@
 interface Shows {
     id: number;
     name: string;
-    ep: string;
+    ep: number;
     showLink: string;
     img: string;
     desc: string;
@@ -30,7 +30,7 @@ interface Show {
     img: string;
     desc: string;
     links?: Array<{
-        ep: string;
+        ep: number;
         resolution: string;
         bots: Array<{
             bot: string;

@@ -62,37 +62,42 @@ export default class horriblesubs extends searcher {
     }
     displayIndex() {
         this.updateIndex()
-        return db.get('index').value().sort((a, b) => {
+        return db.get('index').value().sort((a: {date: string}, b: {date: string}) => {
             if (new Date(a.date) > new Date(b.date)) { return -1 }
             if (new Date(a.date) < new Date(b.date)) { return 1 }
         })
     }
     async displayShow(show: Show['showLink']) {
-        show = '/shows/' + show
-        let data: any = db.get('shows')
-        let dbShow = data.find({ showLink: show })
-        let res: Show = dbShow.value()
-        if (typeof res !== 'undefined') {
-            let lastShowInDB = _.maxBy(res.links, (res) => res.ep).ep
-            let update = await this.showUpdate(show, lastShowInDB)
-            let links = dbShow.value().links
-            let updated = update.links.filter(link => link.ep > lastShowInDB)
-            updated = _.sortBy(links.concat(updated), (o) => {
-                let v = parseFloat(o.ep)
-                return isNaN(v) ? o.ep : v
-            })
-            dbShow.assign({ links: updated }).write()
-            return dbShow.value()
-        } else {
-            return await this.showUpdate(show).then(getRes => {
-                getRes.links = _.sortBy(getRes.links, (o) => {
-                    let v = parseFloat(o.ep)
-                    return isNaN(v) ? o.ep : v
+            show = '/shows/' + show
+            let data: any = db.get('shows')
+            let dbShow = data.find({ showLink: show })
+            let res: Show = dbShow.value()
+            if (typeof res !== 'undefined') {
+                let tmp = _.maxBy(res.links, (res) => res.ep)
+                if(typeof tmp !== 'undefined') {
+                    const lastShowInDB = tmp.ep
+                    let update = await this.showUpdate(show, lastShowInDB)
+                    if(typeof update !== 'undefined') {
+                        let links = dbShow.value().links
+                        let updated = update.links!.filter(link => link.ep > lastShowInDB)
+                        updated = _.sortBy(links.concat(updated), ['ep'])
+                        dbShow.assign({ links: updated }).write()
+                        return dbShow.value()
+                    } else {
+                        return dbShow.value()
+                    }
+                }
+            } else {         
+                return await this.showUpdate(show).then(getRes => {
+                    if(typeof getRes !== 'undefined') {
+                        getRes.links = _.sortBy(getRes.links, ['ep'])
+                        data.push(getRes).write()
+                        return dbShow.value()
+                    } else {
+                        throw Error('displayShow : cant showupdate NEW SHOW')
+                    }
                 })
-                data.push(getRes).write()
-                return dbShow.value()
-            })
-        }
+            }
     }
     markAsWatched(id: number, ep: string | number): void {
         let data: any = db.get('watched')
@@ -132,7 +137,7 @@ export default class horriblesubs extends searcher {
         }
     }
 
-    whatToWatch(displayall = false): Show[] {
+    whatToWatch(displayall = false) {
         const f: any = db.get('follows').value()
         const shows: Show[] = []
         for (let index = 0; index < f.length; index++) {
@@ -142,7 +147,7 @@ export default class horriblesubs extends searcher {
             if (typeof s !== 'undefined') {
                 let w: any = db.get('watched')
                 w = w.find({ id: el.id }).value()
-                const lastreleased = Math.max.apply(Math, s.links.map(function (o) { return o.ep; }))
+                const lastreleased = Math.max.apply(Math, s.links.map(function (o: { ep: any }) { return o.ep; }))
                 let lastwatched: number = 0
                 if (typeof w !== 'undefined') {
                     lastwatched = Math.max.apply(null, w.ep)
@@ -160,7 +165,7 @@ export default class horriblesubs extends searcher {
                 }
             }
         }
-        if (shows.length > 0) {
+        if (shows.length) {
             return _.sortBy(shows, 'name')
         }
     }
@@ -174,7 +179,7 @@ export default class horriblesubs extends searcher {
         let data: any = db.get('follows').value()
         return data.map((a: { id: number }) => a.id)
     }
-    favList(): Show[] {
+    favList() {
         const data: Array<{ id: number }> = db.get('follows').value()
         const shows: any = db.get('shows')
         const results: Show[] = []
@@ -185,7 +190,7 @@ export default class horriblesubs extends searcher {
                 results.push(show)
             }
         }
-        if (results.length > 0) {
+        if (results.length) {
             return results
         }
     }

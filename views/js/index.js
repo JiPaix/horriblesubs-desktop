@@ -21,9 +21,10 @@ $('document').ready(() => {
     })
 
     socket.on('watch', fileInfo => {
+        file = path.parse(fileInfo.file).name
         $('#player').attr('src', '/files/' + fileInfo.file)
         $('video')[0].load()
-        $('#track').attr('src', '/files/' + fileInfo.file + '.vtt')
+        $('#track').attr('src', '/files/' + file + '.vtt')
         let video = document.querySelector('.embed-responsive-16by9')
         video.textTracks[0].mode = 'showing'
         window.scrollTo({

@@ -27,18 +27,17 @@ function createWindow() {
         backgroundColor: '#343a40',
         width: 800,
         height: 600,
-        frame: true,
+        frame: false,
         resizable: true,
         webPreferences: {
-            nodeIntegration: true,
-            preload: './preload.js'
+            nodeIntegration: true
         }
     })
     // and load the index.html of the app.
     win.loadURL('http://localhost:3000')
 
     // Open the DevTools.
-    win.webContents.openDevTools()
+    // win.webContents.openDevTools()
 }
 try {
     const serv = new server(opts)

@@ -1,7 +1,12 @@
 import * as cheerio from "cheerio";
-import * as rp from 'request-promise-native'
-import { BasicShows, Shows } from './interfaces'
+import * as needle from 'needle'
+import { Shows } from './interfaces'
 import * as event from 'eventemitter3'
+needle.defaults({
+    open_timeout: 10000,
+    user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36',
+    follow_max         : 5    // follow up to five redirects
+})
 export default class fetcher extends event {
     public homePage: string;
     public API: string
@@ -24,8 +29,8 @@ export default class fetcher extends event {
         const apiMethod: string = '?method=getlatest'
         let currentJob: string[] = []
         try {
-            const html = await rp(this.API + apiMethod)
-            const $ = cheerio.load(html)
+            const html = await needle('get',this.API + apiMethod)
+            const $ = cheerio.load(html.body)
             $('a').each((_i, el) => {
                 const currentLink = $(el).attr('href');
                 if(typeof currentLink !== 'undefined') {
@@ -81,13 +86,14 @@ export default class fetcher extends event {
         url = url.replace('?search=', 'search.php?t=')
         let file = url.replace('https://xdcc.horriblesubs.info/search.php?t=', '')
         try {
-            let html = await rp(url, { timeout: 10000 })
-            html = html.replace(/(p\.k\[\d+\]\s\=\s)/gi, '')
-            html = html.replace(/(;[^;$])/gi, ',')
-            html = html.replace(/.$/gi, ']')
-            html = `[${html}`
-            if (typeof eval(html) === 'object') {
-                let res: Shows["quality"]["bots"] = eval(html).map((bots: { f: string; b: string; n: number; s: number }) => {
+            let html = await needle('get', url)
+            let parsed = html.body;
+            parsed.replace(/(p\.k\[\d+\]\s\=\s)/gi, '')
+            parsed = parsed.replace(/(;[^;$])/gi, ',')
+            parsed = parsed.replace(/.$/gi, ']')
+            parsed = `[${parsed}`
+            if (typeof eval(parsed) === 'object') {
+                let res: Shows["quality"]["bots"] = eval(parsed).map((bots: { f: string; b: string; n: number; s: number }) => {
                     if (bots.f.includes(file)) {
                         return { bot: bots.b, pack: bots.n }
                     }
@@ -101,7 +107,7 @@ export default class fetcher extends event {
                 })
                 res = res.filter(el => typeof el !== 'undefined')
                 return {
-                    resolution: html.match(/(\[\d+p\])/g)[0].replace(/\[/g, '').replace(/\]/g, ''),
+                    resolution: parsed.match(/(\[\d+p\])/g)[0].replace(/\[/g, '').replace(/\]/g, ''),
                     bots: res
                 }
             } else {
@@ -113,8 +119,9 @@ export default class fetcher extends event {
     }
     async fetchShow(url: string) {
         try {
-            const html = await rp(url, { timeout: 10000 })
-            const $ = cheerio.load(html)
+            const html = await needle('get', url)
+            if(html.body.length === 0) {throw Error(`fetchShow: can't parse HTML`)}
+            const $ = cheerio.load(html.body)
             let filter = $('script').filter((_index, elem) => {
                 return $(elem).html()!.includes('var hs_showid')
             }).html()
@@ -144,8 +151,8 @@ export default class fetcher extends event {
     async getShow(id: number) {
         const apiMethod: string = '?method=getshows&type=show&showid='
         try {
-            const html = await rp(this.API + apiMethod + id, { timeout: 10000 })
-            const $ = cheerio.load(html)
+            const html = await needle('get', this.API + apiMethod + id)
+            const $ = cheerio.load(html.body)
             const show = $('.rls-links-container').first().children('.rls-link').children('.hs-xdcc-link').children('a').last().prev('a').attr('href')
             if(typeof show !== 'undefined') {
                 return show
@@ -159,8 +166,8 @@ export default class fetcher extends event {
     }
     async getAllshows() {
         try {
-            const res = await rp(this.homePage + '/shows/')
-            const $ = cheerio.load(res)
+            const res = await needle('get', this.homePage + '/shows/')
+            const $ = cheerio.load(res.body)
             const results: Array<{ name: string, url: string }> = []
             $('.ind-show').each((_i, el) => {
                 const uri = $(el).children('a').attr('href')

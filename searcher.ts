@@ -1,7 +1,7 @@
 import * as cheerio from "cheerio";
-import * as rp from 'request-promise-native'
 import fetcher from './fetcher'
 import { Show } from './interfaces'
+import * as needle from 'needle'
 
 export default class searcher extends fetcher {
     delay: number
@@ -55,8 +55,8 @@ export default class searcher extends fetcher {
         }
             let final:any[] = []
             for (let i = 0; i < page; i++) {
-                let request = await rp(this.API + apiMethod(id, i), { timeout: 10000 }).catch((e) => console.log(e))
-                const $ = cheerio.load(request)
+                let request = await needle('get',this.API + apiMethod(id, i), { timeout: 10000 })
+                const $ = cheerio.load(request.body)
                 let res: Array<{ ep: number, link: string }> = []
                 $('.rls-links-container').each((i, el) => {
                     let ep = $(el).parent().children('a').children('strong').text()

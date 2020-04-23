@@ -6,15 +6,16 @@ import * as fs from 'fs'
 import * as execa from 'execa'
 import * as ass2vtt from 'ass-to-vtt'
 import * as http from 'http'
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 
 const express = require('express')
 const app = express()
 const serv = http.createServer(app)
 const io = require('socket.io')(serv)
 app.set('view engine', 'pug');
-app.use('/static', express.static(__dirname + '/views/js'));
 
+app.set('views', path.normalize(path.join(__dirname, '/views')))
+app.use('/static', express.static(path.normalize(path.join(__dirname, '/views/js'))));
 
 export default class server extends horriblesubs {
     xdccJS: XDCC
@@ -129,7 +130,7 @@ export default class server extends horriblesubs {
     xdccEvents(socket: { on?: any; emit: any }) {
         this.xdccJS.on('downloaded', fileInfo => {
             socket.emit('downloading', 100)
-            if (path.extname(fileInfo.file) === 'mkv') {
+            if (path.extname(fileInfo.file) === '.mkv') {
                 this.mkv2vtt(fileInfo.file, () => {
                     socket.emit('watch', fileInfo)
                 })

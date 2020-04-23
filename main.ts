@@ -1,12 +1,15 @@
 import { app, BrowserWindow, ipcMain, session } from 'electron'
 import server from './server'
-import * as path from 'path'
 import * as pug from 'pug'
-import * as fs from 'fs'
-import * as rp from 'request-promise-native'
 import { ElectronBlocker } from '@cliqz/adblocker-electron';
 import fetch from 'cross-fetch';
-
+import * as needle from 'needle'
+needle.defaults({
+    open_timeout: 10000,
+    user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36',
+    follow_max         : 5    // follow up to five redirects
+})
+app.allowRendererProcessReuse = true
 const opts = {
     host: 'irc.rizon.net',
     nick: 'JiPaix',
@@ -57,11 +60,19 @@ try {
         });
         MAL = new BrowserWindow({
             title: 'MyAnimeList search',
-            width: 400,
+            width: 500,
             height: 400,
             show: false,
+            frame: false,
+            resizable: true,
+            webPreferences: {
+                nodeIntegration: true,
+                webviewTag: true
+            },
             backgroundColor: '#343a40',
         })
+        MAL.webContents.openDevTools()
+
         MAL.removeMenu()
         MAL.on('close', (event) => {
             event.preventDefault()
@@ -75,28 +86,23 @@ try {
     })
 
 
-    ipcMain.on('MAL', function (event, arg) {
-        console.log(arg)
-        MAL.loadURL(arg)
+    ipcMain.on('please-quit-MAL', function (event, arg) {
+        MAL.hide()
     })
 
 
-    ipcMain.on('data-search', async function (event, arg) {
-        MAL.loadURL(`file://${__dirname}/views/loading.html`).then(() => {
-            MAL.show()
+    ipcMain.on('data-search', (_event, arg) => {
+        MAL.loadFile(`${__dirname}/views/loading.html`).then(() => { MAL.show()})
+        needle('get', arg.url, {open_timeout: 10000}).then(json => {
+                json = json.body.categories.filter((cat: { type: string }) => cat.type === 'anime')[0].items
+                const items = { items: json }
+                const search = pug.renderFile(`${__dirname}/views/search.pug`, items)
+                MAL.loadURL(`data:text/html;charset=UTF-8,${encodeURIComponent(search)}`).catch(e => console.log(e))
+        }).catch(e => {
+            console.log(e)
         })
-        try {
-            let json = await rp(arg.url)
-            json = JSON.parse(json)
-            json = json.categories.filter((cat: { type: string }) => cat.type === 'anime')[0].items
-            const search = pug.renderFile(`${__dirname}/views/search.pug`, {
-                items: json
-            })
-            fs.writeFileSync(`${__dirname}/views/search.html`, search)
-            MAL.loadURL(`file://${__dirname}/views/search.html`)
-        } catch (e) {
-            MAL.hide()
-        }
+
+
     })
 
 

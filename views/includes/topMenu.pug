@@ -1,38 +1,39 @@
-nav.navbar.navbar-expand.navbar-dark.bg-darker.sticky-top.drag
-  a.nodrag.navbar-brand(href='/') <i class="fas fa-home"></i>
-  button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarSupportedContent', aria-controls='navbarSupportedContent', aria-expanded='false', aria-label='Toggle navigation')
-    span.navbar-toggler-icon
-  #navbarSupportedContent.collapse.navbar-collapse
-    ul.nodrag.navbar-nav.mr-auto
-      li.nav-item.dropdown.ml-5
-        a#fav.nav-link(title='Favorites',href='/fav', role='button')
-          if typeof towatch !== 'undefined'
-            | <i class="fas fa-bookmark"></i><sup class="badge badge-danger" style="margin-left:-1px;">#{towatch.length}</sup>
-          else
-            | <i class="fas fa-bookmark"></i><sup class="badge badge-light">0</sup>
-      li.nav-item.dropdown.ml-4
-        a#allshows.nav-link(title='All Animes',href='/shows', role='button')
-          | <i class="fas fa-search"></i>
-      li.nav-item.dropdown.ml-5
-        a#hardrive.nav-link(title='Files',href='/files', role='button')
-          | <i class="fas fa-hdd"></i>
-    ul.nodrag.navbar-nav.ml-auto
-      li.nav-item.dropdown
-        a#import.nav-link.dropdown-toggle(href='#', role='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
-          | <i class="fas fa-ellipsis-v"></i>
-        .dropdown-menu.dropdown-menu-right.bg-darker(aria-labelledby='import')
-          a.dropdown-item.text-white(href='#') Import Backup File
-          a.dropdown-item.text-white(href='#') Export Backup File
-          .dropdown-divider.mx-1.my-1
-          a.dropdown-item.text-white(href='#') Settings
-          .dropdown-divider.mx-1.my-1
-          a.dropdown-item.text-white(href='#') ⚡ Reset ⚡
-      a#minimize.nav-link <i class="far fa-window-minimize"></i>
-      a#resize.nav-link <i class="far fa-window-maximize"></i>
-      a#exit.nav-link <i class="fas fa-times"></i>
-.progress.sticky-top.sticky-top#dlperc(style="height:2px;border-radius:0")
-  #perblue.progress-bar.progress-bar-striped.progress-bar-animated(role="progressbar", aria-valuenow="75", aria-valuemin="0", aria-valuemax="100")
-#blackout(style='background-image:url(https://cncv.ca/wp-content/uploads/2017/09/CNCV-grey-faded-background.png); display:none')
+body.bg-dark.text-white(style='overflow:hidden')
+  nav.navbar.navbar-expand.navbar-dark.bg-darker.sticky-top.drag
+    a.nodrag.navbar-brand(href='/') <i class="fas fa-home"></i>
+    button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarSupportedContent', aria-controls='navbarSupportedContent', aria-expanded='false', aria-label='Toggle navigation')
+      span.navbar-toggler-icon
+    #navbarSupportedContent.collapse.navbar-collapse
+      ul.nodrag.navbar-nav.mr-auto
+        li.nav-item.dropdown.ml-5
+          a#fav.nav-link(title='Favorites',href='/fav', role='button')
+            if typeof towatch !== 'undefined'
+              | <i class="fas fa-bookmark"></i><sup class="badge badge-danger" style="margin-left:-1px;">#{towatch.length}</sup>
+            else
+              | <i class="fas fa-bookmark"></i><sup class="badge badge-light">0</sup>
+        li.nav-item.dropdown.ml-4
+          a#allshows.nav-link(title='All Animes',href='/shows', role='button')
+            | <i class="fas fa-search"></i>
+        li.nav-item.dropdown.ml-5
+          a#hardrive.nav-link(title='Files',href='/files', role='button')
+            | <i class="fas fa-hdd"></i>
+      ul.nodrag.navbar-nav.ml-auto
+        li.nav-item.dropdown
+          a#import.nav-link.dropdown-toggle(href='#', role='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+            | <i class="fas fa-ellipsis-v"></i>
+          .dropdown-menu.dropdown-menu-right.bg-darker(aria-labelledby='import')
+            a.dropdown-item.text-white(href='#') Import Backup File
+            a.dropdown-item.text-white(href='#') Export Backup File
+            .dropdown-divider.mx-1.my-1
+            a.dropdown-item.text-white(href='#') Settings
+            .dropdown-divider.mx-1.my-1
+            a.dropdown-item.text-white(href='#') ⚡ Reset ⚡
+        a#minimize.nav-link <i class="far fa-window-minimize"></i>
+        a#resize.nav-link <i class="far fa-window-maximize"></i>
+        a#exit.nav-link <i class="fas fa-times"></i>
+  .progress.sticky-top.sticky-top#dlperc(style="height:2px;border-radius:0")
+    #perblue.progress-bar.progress-bar-striped.progress-bar-animated(role="progressbar", aria-valuenow="75", aria-valuemin="0", aria-valuemax="100")
+  #blackout(style='background-image:url(https://cncv.ca/wp-content/uploads/2017/09/CNCV-grey-faded-background.png); display:none')
 style.
   ::-webkit-scrollbar {
     width: 4px;
@@ -151,4 +152,7 @@ style.
   }
   ul.nodrag.navbar-nav.mr-auto {
     transform: translate(0px, 3px);
+  }
+  .badge {
+        padding: .25em .4em;!important
   }

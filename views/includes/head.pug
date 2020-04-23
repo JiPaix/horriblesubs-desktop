@@ -20,7 +20,7 @@ head
             })
             $('#dlperc').hide()
             $('#exit').on('click', function() {
-                ipc.send('please-quit')
+                ipc.send('please-quit-MAL')
             })
             $('#minimize').on('click', function() {
                 remote.BrowserWindow.getFocusedWindow().minimize();

@@ -1,89 +1,86 @@
-doctype html
-html
-    include includes/head.pug
-    script(src='//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js')
-    script(src='https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js')
-    link(rel='stylesheet', href='https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css')
-    body.bg-dark.text-white
-        include includes/topMenu.pug
-        main.container.mt-2
-            .mt-4
-                if typeof shows !== 'undefined'
-                    table.table.table-hover.table-dark.table-striped.table-bordered(style="width:100%")
-                        thead
-                            tr.bg-secondary
-                                th &#8195;&#8195;
-                                th Anime
-                                th(title='Last watched Episode') W
-                                th(title='Last released Episode') R
-                                th(title='Episodes to watch') T
-                        tbody
-                                each show in shows
-                                    - show.showLink = show.showLink.replace('/shows/', '')
-                                    tr
-                                        td.align-middle.text-center
-                                            img.img-fluid(src=show.img, style='max-height:40px;transition-duration: 0.5s;z-index:-10')
-                                        td.align-middle
-                                            a.text-decoration-none.text-white(href='/shows/'+show.showLink) #{show.name}
-                                        td.align-middle.text-center #{show.lastwatched}
-                                        td.align-middle.text-center #{show.lastreleased}
-                                        td.align-middle.text-center #{show.lastreleased - show.lastwatched}
-                else
-                    if hasFav
-                        h1 Hey! You've watched everything !?
-                        p.lead Need something new ?
-                        ul
-                            li Add more anime form <i class="fas fa-home"></i>
-                            li Dig through the archives <i class="fas fa-search"></i>
-                    else
-                        h1 You don't have any favorites :
-                        p.lead Try adding some and get updated when new episodes are released.
-                        p.font-weight-bold How ?
-                        ul
-                            li click the <i class="fas fa-home"></i> button
-                            li find an anime in the list and <i>right click</i> on its picture
-                            li on the next page click the <button class='btn btn-warning btn-sm'>FOLLOW</button> button
-    style. 
-        tbody > tr:hover {
-            cursor:pointer
-        }
-        #blackout {
-            width:100%;
-            height:100%;
-            position: fixed;
-            left:0;
-            top:0;
-            z-index:100;
-        }
-        .shows {
-            cursor:pointer;
-            user-drag:none;
-            user-select:none;
-            -webkit-user-select: none;
-            -webkit-user-drag:none;
-        }
+include includes/head.pug
+script(src='//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js')
+script(src='https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js')
+link(rel='stylesheet', href='https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css')
+include includes/topMenu.pug
+main.container.mt-2
+    .mt-4
+        if typeof shows !== 'undefined'
+            table.table.table-hover.table-dark.table-striped.table-bordered(style="width:100%")
+                thead
+                    tr.bg-secondary
+                        th &#8195;&#8195;
+                        th Anime
+                        th(title='Last watched Episode') W
+                        th(title='Last released Episode') R
+                        th(title='Episodes to watch') T
+                tbody
+                        each show in shows
+                            - show.showLink = show.showLink.replace('/shows/', '')
+                            tr
+                                td.align-middle.text-center
+                                    img.img-fluid(src=show.img, style='max-height:40px;transition-duration: 0.5s;z-index:-10')
+                                td.align-middle
+                                    a.text-decoration-none.text-white(href='/shows/'+show.showLink) #{show.name}
+                                td.align-middle.text-center #{show.lastwatched}
+                                td.align-middle.text-center #{show.lastreleased}
+                                td.align-middle.text-center #{show.lastreleased - show.lastwatched}
+        else
+            if hasFav
+                h1 Hey! You've watched everything !?
+                p.lead Need something new ?
+                ul
+                    li Add more anime form <i class="fas fa-home"></i>
+                    li Dig through the archives <i class="fas fa-search"></i>
+            else
+                h1 You don't have any favorites :
+                p.lead Add animes and get updated when new episodes are released.
+                p.font-weight-bold How ?
+                ul
+                    li click the <i class="fas fa-home"></i> button
+                    li find an anime in the list and <i>right click</i> on its picture
+                    li on the next page click the <button class='btn btn-warning btn-sm'>FOLLOW</button> button
+style. 
+    tbody > tr:hover {
+        cursor:pointer
+    }
+    #blackout {
+        width:100%;
+        height:100%;
+        position: fixed;
+        left:0;
+        top:0;
+        z-index:100;
+    }
+    .shows {
+        cursor:pointer;
+        user-drag:none;
+        user-select:none;
+        -webkit-user-select: none;
+        -webkit-user-drag:none;
+    }
 
-    script.
-        $(document).ready(function() {
-            $('tbody > tr').on('click', function() {
-                $('#blackout').show()
-                let link = $(this).children('td').children('a').attr('href')
-                window.location.href = link
-            })
-            $('#fav').toggleClass('active')
-            $('table.table').css('display', 'table')
-            $('table.table').DataTable({
-                "paging":   false,
-                "searching": false,
-                "info":     false,
-                'pageLength': 999,
-                "order": [[ 4, "desc" ]],
-                "columns":[
-                    { 'width': '2%', 'orderable': false},
-                    { 'width': '92%'},
-                    { 'width': '2%'},
-                    { 'width': '2%'},
-                    { 'width': '2%'},
-                ]
-        } );
+script.
+    $(document).ready(function() {
+        $('tbody > tr').on('click', function() {
+            $('#blackout').show()
+            let link = $(this).children('td').children('a').attr('href')
+            window.location.href = link
         })
+        $('#fav').toggleClass('active')
+        $('table.table').css('display', 'table')
+        $('table.table').DataTable({
+            "paging":   false,
+            "searching": false,
+            "info":     false,
+            'pageLength': 999,
+            "order": [[ 4, "desc" ]],
+            "columns":[
+                { 'width': '2%', 'orderable': false},
+                { 'width': '92%'},
+                { 'width': '2%'},
+                { 'width': '2%'},
+                { 'width': '2%'},
+            ]
+    } );
+    })

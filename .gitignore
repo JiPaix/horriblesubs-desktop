@@ -6,3 +6,4 @@ dist
 *.lock
 .yarn
 release
+.vscode

@@ -6,36 +6,40 @@ import * as _ from 'lodash'
 import * as fs from 'fs'
 import * as Path from 'path'
 import * as filesize from 'filesize'
-const adapter = new FileSync('db.json')
-const db = low(adapter)
-db.defaults({ shows: [], index: [], watched: [], follows: [] }).write()
 
+const adapter = new FileSync(Path.normalize(Path.join(__dirname, 'db.json')))
 
 export default class horriblesubs extends searcher {
     refreshIndex: number
     keepIndex: number;
-    path: string
+    path: string;
+    db: low.LowdbSync<any>
     /**
      * @param refreshIndex - Minutes between each refresh of index
      * @param keepIndex - Month before index entries are removed from database
      * @param path - path where files are stored
      */
-    constructor(refreshIndex: number = 10, keepIndex: number = 1, path: string) {
+    constructor(refreshIndex: number = 10, keepIndex: number = 1, path: string, checkStartup: boolean) {
         super()
-        this.path = Path.join(Path.resolve('./'), path);
+        this.db = low(adapter)
+        this.db.defaults({ shows: [], index: [], watched: [], follows: [], settings: [] }).write()
+        this.path = path
         this.keepIndex = keepIndex
-        this.refreshIndex = refreshIndex * 60000
+        this.refreshIndex = refreshIndex
         this.autoFetch(this.refreshIndex)
+        if(checkStartup) {
+            this.fetchIndex()
+        }
         this.autoUpdateDB()
     }
     autoUpdateDB() {
         setInterval(() => {
             this.updateIndex()
-        }, 60000)
+        }, 5000)
     }
     updateIndex() {
-        let follow: any = db.get('follows')
-        let data: any = db.get('index')
+        let follow: any = this.db.get('follows')
+        let data: any = this.db.get('index')
         for (let i = 0; i < this.shows.length; i++) {
             const current = this.shows[i];
             const searchInDB = data.find({ id: current.id, ep: current.ep }).value()
@@ -62,14 +66,14 @@ export default class horriblesubs extends searcher {
     }
     displayIndex() {
         this.updateIndex()
-        return db.get('index').value().sort((a: {date: string}, b: {date: string}) => {
+        return this.db.get('index').value().sort((a: {date: string}, b: {date: string}) => {
             if (new Date(a.date) > new Date(b.date)) { return -1 }
             if (new Date(a.date) < new Date(b.date)) { return 1 }
         })
     }
     async displayShow(show: Show['showLink']) {
             show = '/shows/' + show
-            let data: any = db.get('shows')
+            let data: any = this.db.get('shows')
             let dbShow = data.find({ showLink: show })
             let res: Show = dbShow.value()
             if (typeof res !== 'undefined') {
@@ -100,7 +104,7 @@ export default class horriblesubs extends searcher {
             }
     }
     markAsWatched(id: number, ep: string | number): void {
-        let data: any = db.get('watched')
+        let data: any = this.db.get('watched')
         let find = data.find({ id: id })
         let res = find.value()
         if (typeof res === 'undefined') {
@@ -116,7 +120,7 @@ export default class horriblesubs extends searcher {
         }
     }
     findLastWatched(id: number): number | string {
-        let data: any = db.get('watched')
+        let data: any = this.db.get('watched')
         let find = data.find({ id: id })
         let res = find.value()
         if (typeof res === 'undefined') {
@@ -126,7 +130,7 @@ export default class horriblesubs extends searcher {
         }
     }
     follow(showID: Show['id'], unfollow?: true) {
-        let data: any = db.get('follows')
+        let data: any = this.db.get('follows')
         if (typeof showID !== 'number') {
             showID = parseInt(showID)
         }
@@ -138,14 +142,14 @@ export default class horriblesubs extends searcher {
     }
 
     whatToWatch(displayall = false) {
-        const f: any = db.get('follows').value()
+        const f: any = this.db.get('follows').value()
         const shows: Show[] = []
         for (let index = 0; index < f.length; index++) {
             const el: Show = f[index];
-            let s: any = db.get('shows')
+            let s: any = this.db.get('shows')
             s = s.find({ id: el.id }).value()
             if (typeof s !== 'undefined') {
-                let w: any = db.get('watched')
+                let w: any = this.db.get('watched')
                 w = w.find({ id: el.id }).value()
                 const lastreleased = Math.max.apply(Math, s.links.map(function (o: { ep: any }) { return o.ep; }))
                 let lastwatched: number = 0
@@ -171,17 +175,17 @@ export default class horriblesubs extends searcher {
     }
     // Favorites DISPLAY
     isFav(showID: Show['id']): boolean {
-        let data: any = db.get('follows')
+        let data: any = this.db.get('follows')
         data = data.find({ id: showID }).value()
         if (typeof data === 'undefined') { return false } else { return true }
     }
     favIds(): number[] | [] {
-        let data: any = db.get('follows').value()
+        let data: any = this.db.get('follows').value()
         return data.map((a: { id: number }) => a.id)
     }
     favList() {
-        const data: Array<{ id: number }> = db.get('follows').value()
-        const shows: any = db.get('shows')
+        const data: Array<{ id: number }> = this.db.get('follows').value()
+        const shows: any = this.db.get('shows')
         const results: Show[] = []
         for (let i = 0; i < data.length; i++) {
             const element = data[i];
@@ -220,11 +224,12 @@ export default class horriblesubs extends searcher {
         }
     }
     findFile(show: Shows | { ep: string; name: string; bot: string; pack: string|number }) {
+            console.log('looking for files')
             let b = fs.readdirSync(this.path).filter(file => file.replace(/[^a-zA-Z ]/g, "").includes(show.name.replace(/[^a-zA-Z ]/g, "")))
             let c = b.filter(file => !file.includes('.vtt')).filter(file => !file.includes('.srt'))
-            let d = c.filter(file => file.includes(` ${show.ep} `))
+            let d = c.filter(file => file.includes(` ${show.ep.toString().padStart(2, '0')} `))
             if(d.length) {
-                return c.filter(file => file.includes(` ${show.ep} `))
+                return c.filter(file => file.includes(` ${show.ep.toString().padStart(2, '0')} `))
             }
     }
     deleteFiles(files: string[]) {
@@ -232,9 +237,9 @@ export default class horriblesubs extends searcher {
             let directory = fs.readdirSync(this.path)
             for (let file of files) {
                 if (directory.some(res => res.includes(file))) {
-                    let foundFiles = directory.filter(dir => dir.replace(/\.[a-z]$/g, '').includes(file))
+                    let foundFiles = directory.filter(dir => Path.basename(dir).includes(file))
                     for (let foundFile of foundFiles) {
-                        fs.unlinkSync(`${this.path}/${foundFile}`)
+                        fs.unlinkSync(Path.join(this.path, foundFile))
                         this.emit('file-deleted', file)
                     }
                 }

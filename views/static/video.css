@@ -1,0 +1,11 @@
+video::cue {
+    text-shadow: 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black!important;
+    background: transparent!important;
+}
+video:focus {
+    outline: none;
+}
+video::-webkit-media-text-track-container {
+    overflow: visible !important;
+    transform: translateY(-5%) !important;
+   }

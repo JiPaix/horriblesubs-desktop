@@ -1,7 +1,9 @@
 include includes/head.pug
 script(src='//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js')
 script(src='https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js')
+script(src='/static/fav.js')
 link(rel='stylesheet', href='https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css')
+link(rel='stylesheet', href='/static/fav.css')
 include includes/topMenu.pug
 main.container.mt-2
     .mt-4
@@ -40,47 +42,3 @@ main.container.mt-2
                     li click the <i class="fas fa-home"></i> button
                     li find an anime in the list and <i>right click</i> on its picture
                     li on the next page click the <button class='btn btn-warning btn-sm'>FOLLOW</button> button
-style. 
-    tbody > tr:hover {
-        cursor:pointer
-    }
-    #blackout {
-        width:100%;
-        height:100%;
-        position: fixed;
-        left:0;
-        top:0;
-        z-index:100;
-    }
-    .shows {
-        cursor:pointer;
-        user-drag:none;
-        user-select:none;
-        -webkit-user-select: none;
-        -webkit-user-drag:none;
-    }
-
-script.
-    $(document).ready(function() {
-        $('tbody > tr').on('click', function() {
-            $('#blackout').show()
-            let link = $(this).children('td').children('a').attr('href')
-            window.location.href = link
-        })
-        $('#fav').toggleClass('active')
-        $('table.table').css('display', 'table')
-        $('table.table').DataTable({
-            "paging":   false,
-            "searching": false,
-            "info":     false,
-            'pageLength': 999,
-            "order": [[ 4, "desc" ]],
-            "columns":[
-                { 'width': '2%', 'orderable': false},
-                { 'width': '92%'},
-                { 'width': '2%'},
-                { 'width': '2%'},
-                { 'width': '2%'},
-            ]
-    } );
-    })

@@ -1,36 +1,19 @@
 head
-    script.
-        const ipc = require('electron').ipcRenderer
-        const $ = jQuery = require('jquery');
-        window.$ = window.jQuery = require('jquery')
-        require('popper.js');
-        require('bootstrap');
-        const path = require('path')
-        const { remote } = require('electron')
-        const toastr = require('toastr')
-        const socket = require('socket.io-client')()
-    link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css', integrity='sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh', crossorigin='anonymous')
-    link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css')
-    link(rel='stylesheet', href='/static/main.css')
-    <script src="https://kit.fontawesome.com/b5b3f033d7.js" crossorigin="anonymous"></script>
-    script.
-        $(document).ready(function() {
-            socket.on('fav-update', function() {
-                $('sup.badge').text(parseInt($('sup.badge').text()) + 1)
-            })
-            $('#dlperc').hide()
-            $('#exit').on('click', function() {
-                ipc.send('please-quit-MAL')
-            })
-            $('#minimize').on('click', function() {
-                remote.BrowserWindow.getFocusedWindow().minimize();
-            })
-            $('#resize').on('click', function () {
-                if($(this).hasClass('max')){
-                    remote.BrowserWindow.getFocusedWindow().unmaximize()
-                } else {
-                    remote.BrowserWindow.getFocusedWindow().maximize()
-                }
-                $(this).toggleClass('max')
-            })
-        })
+	script.
+		const ipc = require('electron').ipcRenderer
+		const $ = jQuery = require('jquery');
+		window.$ = window.jQuery = require('jquery')
+		require('popper.js');
+		require('bootstrap');
+		const path = require('path')
+		const { remote } = require('electron')
+		const toastr = require('toastr')
+		require( 'datatables.net-bs4' )()
+		require('bootstrap4-toggle')
+	script(src='/socket.io/socket.io.js')
+	link(rel='stylesheet', href='/static/bootstrap/dist/css/bootstrap.min.css', integrity='sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh', crossorigin='anonymous')
+	link(rel='stylesheet', href='/static/toastr/build/toastr.min.css')
+	link(rel='stylesheet', href='/static/main.css')
+	script(src="/static/@fortawesome/fontawesome-free/js/all.min.js")
+	script(src="/static/@fortawesome/fontawesome-free/js/fontawesome.min.js")
+	script(src='/static/head.js')

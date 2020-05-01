@@ -45,15 +45,32 @@ interface Params {
     chan: string,
     path: string,
     port: number,
+    startupCheck: boolean,
     verbose?: boolean,
-    randomizeNick?: boolean
-    refreshIndex?: number
+    randomizeNick?: boolean,
+    refreshIndex?: number,
     keepIndex?: number
 }
 
+interface MainSettings {
+    id: number,
+    nickname: string,
+    chan: string,
+    randomizeNick?: boolean,
+    keepIndex?: number,
+    refreshIndex? : number,
+    startupCheck: boolean,
+    path: string,
+    pathSize: number,
+    host: string,
+    port: number,
+    verbose?: boolean
+    firstBoot?: boolean
+}
 export {
     Shows,
     Show,
     BasicShows,
-    Params
+    Params,
+    MainSettings
 }

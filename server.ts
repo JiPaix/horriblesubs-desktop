@@ -7,6 +7,7 @@ import * as execa from 'execa'
 import * as ass2vtt from 'ass-to-vtt'
 import * as http from 'http'
 import { Request, Response } from 'express';
+import {exec} from 'child_process'
 
 const express = require('express')
 const app = express()
@@ -14,13 +15,15 @@ const serv = http.createServer(app)
 const io = require('socket.io')(serv)
 app.set('view engine', 'pug');
 
-app.set('views', path.normalize(path.join(__dirname, '/views')))
-app.use('/static', express.static(path.normalize(path.join(__dirname, '/views/js'))));
+app.set('views', path.normalize(path.resolve(__dirname, '../views')))
+app.use('/static', express.static(path.normalize(path.resolve(__dirname, '../views/static'))));
 
 export default class server extends horriblesubs {
     xdccJS: XDCC
+    mkv2ttJob: string[]
+    app: any
     constructor(params: Params) {
-        super(params.refreshIndex, params.keepIndex, params.path)
+        super(params.refreshIndex, params.keepIndex, params.path, params.startupCheck)
         this.xdccJS = new XDCC({
             host: params.host,
             nick: params.nick,
@@ -33,6 +36,8 @@ export default class server extends horriblesubs {
         this.xdccJS.on('xdcc-ready', () => {
             this.startServer()
         })
+        this.mkv2ttJob = []
+        this.app = app
     }
     startServer() {
         app.use('/files', express.static(this.path));
@@ -50,6 +55,7 @@ export default class server extends horriblesubs {
     routes() {
         app.get('/', (_req: Request, res: Response) => {
             res.render('index', {
+                videoPath: String.raw`${this.path}`.replace(/\\/g, '\\\\'),
                 shows: this.displayIndex(),
                 follows: this.favIds(),
                 towatch: this.whatToWatch()
@@ -83,6 +89,7 @@ export default class server extends horriblesubs {
                 let towatch = this.whatToWatch()
                 let follows= this.isFav(show.id)
                 res.render('shows', {
+                    videoPath: String.raw`${this.path}`.replace(/\\/g, '\\\\'),
                     show: show,
                     lastwatched: lastwatched,
                     towatch: towatch,
@@ -132,13 +139,14 @@ export default class server extends horriblesubs {
             socket.emit('downloading', 100)
             if (path.extname(fileInfo.file) === '.mkv') {
                 this.mkv2vtt(fileInfo.file, () => {
+                    this.mkv2ttJob = this.mkv2ttJob.filter(file => file !== fileInfo.file)
                     socket.emit('watch', fileInfo)
                 })
             } else {
                 socket.emit('watch', fileInfo)
             }
         })
-        this.xdccJS.on('downloading', (inc: any, file: any) => {
+        this.xdccJS.on('downloading', (inc: number, file: any) => {
             let total = file.length
             let percentage = inc * 100 / total
             socket.emit('downloading', percentage)
@@ -156,20 +164,37 @@ export default class server extends horriblesubs {
         })
     }
     private mkv2vtt(file: string, cb: () => void) {
-        let normalizedEXT = path.normalize(`${this.path}/${file}`)
-        let normalizedNoEXT = path.normalize(`${this.path}/${path.parse(file).name}`)
+        let filePath
+        let filePathNoExt: string;
+        let binDir
         if(process.platform === 'win32') {
-            execa.sync('mkvextract.exe', ['tracks', `${normalizedEXT}`, `2:${normalizedNoEXT}.ass`])
-        } else if(process.platform === 'linux') {
-            execa.sync('mkvextract', ['tracks', `${normalizedEXT}`, `2:${normalizedNoEXT}.ass`])
-        } else if(process.platform === 'darwin') {
-            execa.sync('mkvextract-darwin', ['tracks', `${normalizedEXT}`, `2:${normalizedNoEXT}.ass`])
+            filePath = path.win32.normalize(path.join(`${this.path}/${file}`))
+            filePathNoExt = path.win32.normalize(path.join(`${this.path}/${path.parse(file).name}`))
+            binDir = path.win32.normalize(path.resolve(__dirname, '../bin/mkvextract.exe'))
+        } else if (process.platform === 'linux') {
+            filePath = path.normalize(path.join(`${this.path}/${file}`))
+            filePathNoExt = path.normalize(path.join(`${this.path}/${path.parse(file).name}`))
+            binDir = path.normalize(path.resolve(__dirname, '../bin/mkvextract'))
+        } else if (process.platform === 'darwin') {
+            filePath = path.normalize(path.join(`${this.path}/${file}`))
+            filePathNoExt = path.normalize(path.join(`${this.path}/${path.parse(file).name}`))
+            binDir = path.normalize(path.resolve(__dirname, '../bin/mkvextract-darwin'))
+        } else {
+            throw Error(`${process.platform} isn't a supported platform`)
         }
-        fs.createReadStream(path.normalize(`${normalizedNoEXT}.ass`))
-            .pipe(ass2vtt())
-            .pipe(fs.createWriteStream(path.normalize(`${normalizedNoEXT}.vtt`)))
-        fs.unlinkSync(`${normalizedNoEXT}.ass`)
-        cb()
+       try {
+        exec(`${binDir} tracks "${filePath}" "2:${filePathNoExt}.ass`, () => {
+            fs.createReadStream(`${filePathNoExt}.ass`)
+                .pipe(ass2vtt())
+                .pipe(fs.createWriteStream(`${filePathNoExt}.vtt`))
+                cb()
+        })
+       } catch(e) {
+           throw e
+       }
+
+
+
     }
     private xdccDownloadAll(show: Show, socket: { emit: (arg0: string) => void }) {
         let bots: Array<{ name: string, pack: number[]}> = []

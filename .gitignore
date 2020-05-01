@@ -3,3 +3,6 @@ dl
 db.json
 /*.js
 dist
+*.lock
+.yarn
+release

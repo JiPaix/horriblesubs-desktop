@@ -5,7 +5,7 @@ import * as event from 'eventemitter3'
 needle.defaults({
     open_timeout: 10000,
     user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36',
-    follow_max         : 5    // follow up to five redirects
+    follow_max         : 5
 })
 export default class fetcher extends event {
     public homePage: string;
@@ -20,7 +20,6 @@ export default class fetcher extends event {
         this.shows = []
     }
     autoFetch(ms: number) {
-        this.fetchIndex()
         setInterval(() => {
             this.fetchIndex()
         }, ms)
@@ -31,11 +30,13 @@ export default class fetcher extends event {
         try {
             const html = await needle('get',this.API + apiMethod)
             const $ = cheerio.load(html.body)
+
             $('a').each((_i, el) => {
                 const currentLink = $(el).attr('href');
                 if(typeof currentLink !== 'undefined') {
                     if (!this.homeFetch.includes(currentLink)) {
                         currentJob.push(currentLink);
+
                     }
                 }
             })
@@ -43,29 +44,34 @@ export default class fetcher extends event {
                 this.homeFetch.concat(currentJob)
                 for (let job of currentJob) {
                     if(job !== null) {
+                        console.log('fetchshow')
                         const res = await this.fetchShow(this.homePage + job)
                         if(typeof res !== 'undefined') {
+                            console.log('getshow')
                             const link = await this.getShow(res.id)
                             if(typeof link !== 'undefined') {
+                                console.log('xdcclist')
                                 const xdcc = await this.xdccList(link)
                                 if(typeof xdcc !== 'undefined') {
-                                    if(job !== null) {
-                                        let tmp = job.match(/(#\d*$)/g)
-                                        if(tmp !== null) {
-                                            let ep:string | number = tmp[0].replace('#', '').replace('-', '.')
-                                            ep = parseFloat(ep)
-                                            if (typeof ep === 'number') {
-                                                this.shows.push({
-                                                    id: res.id,
-                                                    name: res.name,
-                                                    ep: ep,
-                                                    showLink: job.replace(/#\d*(-\d*)*$/, '').replace(/\/?shows\//g, ''),
-                                                    img: res.img,
-                                                    desc: res.desc,
-                                                    quality: xdcc,
-                                                    date: new Date()
-                                                })
-                                            }
+                                    console.log('match')
+                                    let tmp = job.match(/(#\d*$)/g)
+                                    if(tmp !== null) {
+                                        console.log('tmp')
+                                        let ep:string | number = tmp[0].replace('#', '').replace('-', '.')
+                                        ep = parseFloat(ep)
+                                        if (typeof ep === 'number') {
+                                            console.log('iftypenumber')
+                                            this.shows.push({
+                                                id: res.id,
+                                                name: res.name,
+                                                ep: ep,
+                                                showLink: job.replace(/#\d*(-\d*)*$/, '').replace(/\/?shows\//g, ''),
+                                                img: res.img,
+                                                desc: res.desc,
+                                                quality: xdcc,
+                                                date: new Date()
+                                            })
+                                            console.log('we have '+this.shows.length+' shows')
                                         }
                                     }
                                 }
@@ -87,8 +93,7 @@ export default class fetcher extends event {
         let file = url.replace('https://xdcc.horriblesubs.info/search.php?t=', '')
         try {
             let html = await needle('get', url)
-            let parsed = html.body;
-            parsed.replace(/(p\.k\[\d+\]\s\=\s)/gi, '')
+            let parsed = html.body.replace(/(p\.k\[\d+\]\s\=\s)/gi, '')
             parsed = parsed.replace(/(;[^;$])/gi, ',')
             parsed = parsed.replace(/.$/gi, ']')
             parsed = `[${parsed}`

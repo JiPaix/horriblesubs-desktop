@@ -1,6 +1,7 @@
 include includes/head.pug
 script(src='/static/index.js')
 link(rel='stylesheet', href='/static/index.css')
+link(rel='stylesheet', href='/static/video.css')
 include includes/topMenu.pug
 main.container-fluid(style='position:absolute;overflow-y:auto;bottom:0;top:30px;')
     .row.player.mt-2
@@ -34,3 +35,4 @@ main.container-fluid(style='position:absolute;overflow-y:auto;bottom:0;top:30px;
                     small.card-text.text-white-50 Episode: empty
 script.
     let allFollows = #{JSON.stringify(follows)}
+    let videoPath = "#{videoPath}"

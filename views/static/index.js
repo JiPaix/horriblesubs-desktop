@@ -1,4 +1,5 @@
 $('document').ready(() => {
+    const path = require('path')
     toastr.options.positionClass = "toast-bottom-center"
     toastr.options.preventDuplicates = true
     toastr.options.newestOnTop = true
@@ -22,19 +23,19 @@ $('document').ready(() => {
 
     socket.on('watch', fileInfo => {
         file = path.parse(fileInfo.file).name
-        $('#player').attr('src', '/files/' + fileInfo.file)
-        $('video')[0].load()
-        $('#track').attr('src', '/files/' + file + '.vtt')
+        file = path.join(videoPath +'/'+ file)
+        $('#player').attr('src', 'file:///' + file + '.mkv')
+        $('#track').attr('src', 'file:///' + file + '.vtt')
         let video = document.querySelector('.embed-responsive-16by9')
-        video.textTracks[0].mode = 'showing'
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-        $('video')[0].play()
-        $('#dlperc').hide()
-        socket.emit('watched', myshow)
-        downloading = false
+        $('video')[0].load()
+            $('#dlperc').hide()
+            $('main').animate({scrollTop:0}, 'slow')
+            $('video')[0].play().then(()=> {
+                video.textTracks[0].mode = 'showing'
+                socket.emit('watched', myshow)
+                downloading = false
+            })
+
     })
     socket.on('downloading', perc => {
         downloading = true

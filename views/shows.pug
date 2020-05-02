@@ -1,18 +1,21 @@
 include includes/head.pug
+title='hsd@show: '+show.name
 script(src='/static/shows.js')
 include includes/topMenu.pug
 link(rel='stylesheet', href='/static/video.css')
+
 main.container-fluid(style='position:absolute;overflow-y:auto;bottom:0;top:30px;')
 	.row.mt-2
 		.col-12
-			video.embed-responsive.embed-responsive-16by9(controls="controls")
-				source#player(src="", type="video/mp4")
-				track#track(src="", kind="subtitles", srclang="en", label="English")
+			.wrapper.embed-responsive.embed-responsive-16by9
+				video.embed-responsive.embed-responsive-16by9(controls="controls", poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")
+					source#player(src="", type="video/mp4")
+					track#track(src="", kind="subtitles", srclang="en", label="English")
 	.row.mt-2
 		.col-12.text-center
 			each link in show.links
-				if lastwatched.length > 0
-					if lastwatched.includes(link.ep)
+				if lastwatched
+					if lastwatched == link.ep
 						button.ep.m-1.btn.btn-danger(data-bot=link.bots[0].bot, data-pack=link.bots[0].pack, data-ep=link.ep) #{link.ep}
 					else
 						button.ep.m-1.btn.btn-secondary(data-bot=link.bots[0].bot, data-pack=link.bots[0].pack, data-ep=link.ep) #{link.ep}
@@ -24,10 +27,8 @@ main.container-fluid(style='position:absolute;overflow-y:auto;bottom:0;top:30px;
 			else
 				button#followthis.follow.m-1.btn.btn-warning FOLLOW
 	.row.mt-4
-		.col-2.text-center
-			img.img-fluid(src=show.img)
-		.col-10.my-2
-			h4.text-center #{show.name}
+		.col-12.my-2
+			h2.text-center #{show.name}
 			p.mt-3 #{show.desc}
 script.
 	var myshow = {
@@ -36,3 +37,9 @@ script.
 		ep: ''
 	}
 	let videoPath = "#{videoPath}"
+style.
+	.wrapper {
+		background:transparent url('#{show.img}') no-repeat 0 0;
+		background-size: initial;
+		background-position: center;
+	}

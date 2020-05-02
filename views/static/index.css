@@ -18,3 +18,9 @@
     -webkit-user-select: none;
     -webkit-user-drag: none;
 }
+h5 {
+    font-size: 1.8vw;
+}
+small {
+    font-size: 1.5vw;
+}

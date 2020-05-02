@@ -140,9 +140,10 @@ export default class fetcher extends event {
       } else {
         throw EvalError(`couldn't eval: '${html}' from : ${url}`);
       }
-    } catch (e) {}
+    } catch (e) {throw e}
   }
   async fetchShow(url: string) {
+    url = url.replace(/#\d*(-\d*)*$/, "")
     try {
       const html = await needle("get", url);
       if (html.body.length === 0) {
@@ -177,6 +178,7 @@ export default class fetcher extends event {
       }
     } catch (e) {
       console.log(`error when going ${url}`);
+      console.error(e)
     }
   }
   async getShow(id: number) {

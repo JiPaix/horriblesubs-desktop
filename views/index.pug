@@ -1,4 +1,8 @@
 include includes/head.pug
+if towatch
+    title="hsd@home: Fav = "+towatch.length+" | Index = "+shows.length
+else
+    title="hsd@home: Index = "+shows.length
 script(src='/static/index.js')
 link(rel='stylesheet', href='/static/index.css')
 link(rel='stylesheet', href='/static/video.css')

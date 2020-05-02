@@ -9,40 +9,40 @@ body.bg-dark.text-white(style='overflow:hidden')
 				a#minimize.nav-link <i class="far fa-window-minimize"></i>
 				a#resize.nav-link <i class="far fa-window-maximize"></i>
 				a#hide.nav-link <i class="fas fa-times"></i>
-	main.container-fluid.p-0(style='position:absolute;overflow-y:auto;bottom:0;top:24px;')
+	main.container-fluid.p-0(style='position:absolute;overflow-y:auto;bottom:0;top:24px;overflow-x:hidden')
 
-		.row.mt-4.p-3.border.border-bottom-0
+		.row.mt-4.p-3
 			.col-12
-				h4
-					u Updates :
-		.row.px-3
+				h4.text-center.text-uppercase
+					u Updates
+		.row.px-3.py-2
 			.col.align-self-start.align-self-center
 				| Update rate
 			.col-4.align-self-end.text-right.align-self-center
 				if(settings.refreshIndex < 3540000)
-					input#minutes.form-control-sm(type='number', min="1", style="width: 60px", value=settings.refreshIndex/60000)
-					select#duration.form-control-sm
+					input#minutes.form-control-sm(type='number', min="1", max="999" style="width: 5em", value=settings.refreshIndex/60000)
+					select#duration.form-control-sm.ml-2
 						option(selected) Minute(s)
 						option Hour(s)
 						option Day(s)
 				else if(settings.refreshIndex > 3540000 && settings.refreshIndex < 86300000)
-					input#minutes.form-control-sm(type='number', min="1", style="width: 60px", value=settings.refreshIndex/3600000)
-					select#duration.form-control-sm
+					input#minutes.form-control-sm(type='number', min="1", max="999" style="width: 5em", value=settings.refreshIndex/3600000)
+					select#duration.form-control-sm.ml-2
 						option Minute(s)
 						option(selected) Hour(s)
 						option Day(s)
 				else if(settings.refreshIndex > 86300000)
-					input#minutes.form-control-sm(type='number', min="1", style="width: 60px", value=settings.refreshIndex/86400000)
-					select#duration.form-control-sm
+					input#minutes.form-control-sm(type='number', min="1", max="999" style="width: 5em", value=settings.refreshIndex/86400000)
+					select#duration.form-control-sm.ml-2
 						option Minute(s)
 						option Hour(s)
 						option(selected) Day(s)  
-		.row.px-3
+		.row.px-3.py-2
 			.col.align-self-start.align-self-center
 				| Month(s) before episodes are removed from the main page
 			.col-3.align-self-end.text-right.align-self-center.text-right
 				input#epi.form-control-sm(type="number", min="1", style="width:60px", value=settings.keepIndex)
-		.row.px-3
+		.row.px-3.py-2
 			.col.align-self-start.align-self-center
 				| Check for updates at startup
 			.col-3.align-self-end.text-right.align-self-center.text-right
@@ -52,15 +52,15 @@ body.bg-dark.text-white(style='overflow:hidden')
 					input#checkstartup.custom-control-input(type='checkbox')
 		.row.mt-4.p-3.border.border-bottom-0
 			.col-12
-				h4
-					u File Manager :
-		.row.px-3
+				h4.text-center.text-uppercase
+					u File Manager
+		.row.px-3.py-2
 			.col.align-self-start.align-self-center
 				span Download Location<br/>
-					small #{settings.path}
+					small#path #{settings.path}
 			.col.align-self-end.text-right.align-self-center.text-right
 				button#folder.btn.btn-sm.btn-light CHANGE
-		.row.px-3
+		.row.px-3.py-2
 			.col.align-self-start.align-self-center
 				span Download Folder max size warning (
 					i.fas.fa-hdd.mx-1
@@ -68,64 +68,20 @@ body.bg-dark.text-white(style='overflow:hidden')
 					i.fas.fa-hdd.text-danger.mx-1
 				| )
 			.col.align-self-end.text-right.align-self-center.text-right
-				input#size.form-control-sm.m-2(type='number', min="0", style="width: 60px", value=settings.pathSize)
-				span  GB
-				//- (type='number', min='1', style='width: 60px;', value=settings.keepIndex)	
-		//- form.form-inline.mt-4
-		//- 	.form-row.w-100.mx-0
-		//- 		h4.col-12
-		//- 			u Updates:
-		//- 		.form-group.col-12
-		//- 			label(for="minutes") Check for updates every :
-		//- 			if(settings.refreshIndex < 3540000)
-		//- 				input#minutes.form-control-sm.m-2.col-2(type='number', min="1", style="width: 60px", value=settings.refreshIndex/60000)
-		//- 				select#duration.form-control-sm.m-2
-		//- 					option(selected) Minute(s)
-		//- 					option Hour(s)
-		//- 					option Day(s)
-		//- 			else if(settings.refreshIndex > 3540000 && settings.refreshIndex < 86300000)
-		//- 				input#minutes.form-control-sm.m-2.col-2(type='number', min="1", style="width: 60px", value=settings.refreshIndex/3600000)
-		//- 				select#duration.form-control-sm.m-2
-		//- 					option Minute(s)
-		//- 					option(selected) Hour(s)
-		//- 					option Day(s)
-		//- 			else if(settings.refreshIndex > 86300000)
-		//- 				input#minutes.form-control-sm.m-2.col-2(type='number', min="1", style="width: 60px", value=settings.refreshIndex/86400000)
-		//- 				select#duration.form-control-sm.m-2
-		//- 					option Minute(s)
-		//- 					option Hour(s)
-		//- 					option(selected) Day(s)                
-		//- 		.form-group.col-12
-		//- 			label(for="epi") Remove Episode from hompage after
-		//- 			input#epi.form-control-sm.m-2.col-2(type='number', min="1", style="width: 60px", value=settings.keepIndex)
-		//- 			label(for="epi") Month(s)
-		//- 		.form-group.col-12
-		//- 			label.form-check-label(for="checkstartup") Updates at startup :
-		//- 			if settings.startupCheck
-		//- 				input#checkstartup.form-check-input.m-2.col-2(type='checkbox', checked)
-		//- 			else
-		//- 				input#checkstartup.form-check-input.m-2.col-2(type='checkbox')
-		//- 	.form-row.mt-5.w-100.mx-0
-		//- 		h4.col-12
-		//- 			u Files:
-		//- 		.form-group.col-12
-		//- 			label(for="folder") Downloads location :
-		//- 			button#folder.btn.btn-sm.btn-light.m-2 #{settings.path}
-		//- 		.form-group.col-12
-		//- 			label(for="size") Folder size warning (
-		//- 				i.fas.fa-hdd.mx-1
-		//- 				i.fas.fa-hdd.text-warning.mx-1
-		//- 				i.fas.fa-hdd.text-danger.mx-1 
-		//- 			| )
-		//- 			input#size.form-control-sm.m-2(type='number', min="0", style="width: 60px", value=settings.pathSize)
-		//- 			| GB
-		//- .row.mt-5.text-center
-		//- 	.form-group.col-12
-		//- 		button.btn.btn-primary#saveSettings(type="submit") SAVE SETTINGS
+				span  Size in GB :
+				input#size.form-control-sm.m-2(type='number', min="0", max="999" style="width: 5em", value=settings.pathSize)
+		.row.px-3.py-5
+			.col-12.text-center
+				button.btn.btn-primary.hide#saveSettings(type="submit") SAVE SETTINGS
 script.
 	$('#folder').on('click', function(){
-		remote.dialog.showOpenDialog({defaultPath: $(this).text(), properties: ['openDirectory', 'createDirectory']}).then((e) => {
-			$('#folder').text(e.filePaths[0])
+		remote.dialog.showOpenDialog({defaultPath: $("#path").text().replace(' *not saved', ''), properties: ['openDirectory', 'createDirectory']}).then((e) => {
+			if(e.filePaths[0]) {
+				$("#path").html(e.filePaths[0]+ " <span class='text-warning'>*not saved</span>")
+			} else {
+				$("path").html('#{settings.path}')
+			}
+			
 		})
 	})
 	$('#saveSettings').on('click', function() {
@@ -151,6 +107,7 @@ script.
 				pathSize: size
 			}
 			ipc.send('settings-save', res)
+
 	})
 style.
 	a#hide:hover {
@@ -159,9 +116,19 @@ style.
 	ul.nodrag.navbar-nav.mr-auto {
 		transform: scale(1.7)!important;
 	}
-	.form-row:nth-child(even) {
+	.row.px-3.py-2:nth-child(even) {
 		background-color: #212529;
 	}
 	.form-row {
 		padding:2%;
+	}
+	.form-control-sm {
+		height: calc(1.5em + .5rem + 2px);
+		padding: .25rem .5rem;
+		font-size: .7rem;
+		line-height: 1;
+		border-radius: 0.5rem;
+	}
+	.row.px-3.py-2, input {
+		font-size: 0.9rem;
 	}

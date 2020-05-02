@@ -42,8 +42,9 @@ export default class server extends horriblesubs {
     startServer() {
         app.use('/files', express.static(this.path));
         this.routes()
-        serv.listen(3000)
-        this.emit('http-ready')
+        serv.listen(3000, () =>{
+            this.emit('http-ready')
+        })
         io.sockets.on('connection', (socket: { on?: any; emit: any }) => {
             this.IO(socket)
             this.xdccEvents(socket)

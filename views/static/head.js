@@ -7,7 +7,7 @@ $(document).ready(function() {
     $('#exit').on('click', function() {
         ipc.send('quit')
     })
-    $('#hide').on('click', function() {
+    $('#hide, .hide').on('click', function() {
         remote.BrowserWindow.getFocusedWindow().hide()
     })
     $('#minimize').on('click', function() {

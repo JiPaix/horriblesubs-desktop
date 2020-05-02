@@ -57,7 +57,7 @@ try {
     );
     // Main Window
     win = new BrowserWindow({
-      title: "horriblesubs desktop",
+      title: "hs-D",
       backgroundColor: "#343a40",
       width: 800,
       height: 600,
@@ -68,11 +68,12 @@ try {
         webSecurity: false,
         nodeIntegration: true,
       },
+      minWidth: 680
     });
     // Settings Window
     winSettings = new BrowserWindow({
       title: "Settings",
-      width: 500,
+      width: 680,
       height: 700,
       show: false,
       frame: false,
@@ -82,6 +83,7 @@ try {
         webviewTag: true,
       },
       backgroundColor: "#343a40",
+      minWidth: 680
     });
     // MyAnimeList research Window
     MAL = new BrowserWindow({
@@ -126,7 +128,7 @@ try {
     // show load spinner
     win
       .loadFile(
-        path.normalize(path.resolve(__dirname, "../views", "loading.html"))
+        path.normalize(path.resolve(__dirname, "../views", "boot.html"))
       )
       .then(() => {
         win.show();
@@ -202,7 +204,7 @@ try {
       });
       ipcMain.on("data-search", (_event, arg) => {
         MAL.hide();
-        MAL.loadFile(`${__dirname}/views/loading.html`)
+        MAL.loadFile( path.normalize(path.resolve(__dirname, "../views", "loading.html")))
           .then(() => {
             MAL.show();
           })

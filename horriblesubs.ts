@@ -242,7 +242,11 @@ export default class horriblesubs extends searcher {
 		const files = fs.readdirSync(this.path)
 		let fullsize = 0
 		for (let file of files) {
-			if (!file.includes('.srt') && !file.includes('.vtt') && file.includes('.mkv')) {
+			if (
+				!file.includes('.srt') &&
+				!file.includes('.vtt') &&
+				file.includes('.mkv')
+			) {
 				const ext = Path.extname(file)
 				const fileSize = fs.statSync(`${this.path}/${file}`).size
 				file = file.replace(ext, '')

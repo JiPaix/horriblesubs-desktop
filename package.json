@@ -1,53 +1,53 @@
 {
-  "name": "horriblesubs-desktop",
-  "version": "0.0.1",
-  "description": "",
-  "main": "./dist/main.js",
-  "types": "./dist/main.d.ts",
-  "files": [
-    "/dist"
-  ],
-  "scripts": {
-    "build-win": "rimraf dist && node node_modules/typescript/lib/tsc.js -p tsconfig.json",
-    "test": "rimraf dist && node node_modules/typescript/lib/tsc.js -p tsconfig.json && cp -R dl dist/dl && cp -R views dist/views && cp mkvextract* dist/ && node_modules\\electron\\dist\\electron.exe dist/main.js",
-    "start": "node node_modules/typescript/lib/tsc.js -p tsconfig.json && node_modules\\electron\\dist\\electron.exe dist/main.js"
-  },
-  "author": "JiPaix",
-  "license": "MIT",
-  "dependencies": {
-    "@cliqz/adblocker-electron": "^1.14.1",
-    "@fortawesome/fontawesome-free": "^5.13.0",
-    "@types/cheerio": "^0.22.17",
-    "@types/express": "^4.17.6",
-    "@types/lowdb": "^1.0.9",
-    "@types/needle": "^2.0.4",
-    "@types/pug": "^2.0.4",
-    "@types/socket.io": "^2.1.4",
-    "ass-to-vtt": "^1.2.0",
-    "bootstrap": "^4.4.1",
-    "bootstrap4-toggle": "^3.6.1",
-    "cheerio": "^1.0.0-rc.3",
-    "cross-fetch": "^3.0.4",
-    "datatables.net-bs4": "^1.10.20",
-    "execa": "^4.0.0",
-    "express": "^4.17.1",
-    "filesize": "^6.1.0",
-    "jquery": "^3.5.0",
-    "lodash": "^4.17.15",
-    "lowdb": "^1.0.0",
-    "needle": "^2.4.1",
-    "popper.js": "^1.16.1",
-    "pug": "^2.0.4",
-    "rimraf": "^3.0.2",
-    "socket.io": "^2.3.0",
-    "toastr": "^2.1.4",
-    "xdccjs": "^2.3.2"
-  },
-  "devDependencies": {
-    "@types/node": "^12.12.36",
-    "copyfiles": "^2.2.0",
-    "electron": "^8.2.3",
-    "typescript": "^3.8.3"
-  },
-  "repository": "https://github.com/JiPaix/horriblesubs-desktop.git"
+	"name": "horriblesubs-desktop",
+	"version": "0.0.1",
+	"description": "",
+	"main": "./dist/main.js",
+	"types": "./dist/main.d.ts",
+	"files": [
+		"/dist"
+	],
+	"scripts": {
+		"build-win": "rimraf dist && node node_modules/typescript/lib/tsc.js -p tsconfig.json",
+		"test": "rimraf dist && node node_modules/typescript/lib/tsc.js -p tsconfig.json && cp -R dl dist/dl && cp -R views dist/views && cp mkvextract* dist/ && node_modules\\electron\\dist\\electron.exe dist/main.js",
+		"start": "node node_modules/typescript/lib/tsc.js -p tsconfig.json && node_modules\\electron\\dist\\electron.exe dist/main.js"
+	},
+	"author": "JiPaix",
+	"license": "MIT",
+	"dependencies": {
+		"@cliqz/adblocker-electron": "^1.14.1",
+		"@fortawesome/fontawesome-free": "^5.13.0",
+		"@types/cheerio": "^0.22.17",
+		"@types/express": "^4.17.6",
+		"@types/lowdb": "^1.0.9",
+		"@types/needle": "^2.0.4",
+		"@types/pug": "^2.0.4",
+		"@types/socket.io": "^2.1.4",
+		"ass-to-vtt": "^1.2.0",
+		"bootstrap": "^4.4.1",
+		"bootstrap4-toggle": "^3.6.1",
+		"cheerio": "^1.0.0-rc.3",
+		"cross-fetch": "^3.0.4",
+		"datatables.net-bs4": "^1.10.20",
+		"execa": "^4.0.0",
+		"express": "^4.17.1",
+		"filesize": "^6.1.0",
+		"jquery": "^3.5.0",
+		"lodash": "^4.17.15",
+		"lowdb": "^1.0.0",
+		"needle": "^2.4.1",
+		"popper.js": "^1.16.1",
+		"pug": "^2.0.4",
+		"rimraf": "^3.0.2",
+		"socket.io": "^2.3.0",
+		"toastr": "^2.1.4",
+		"xdccjs": "^2.3.2"
+	},
+	"devDependencies": {
+		"@types/node": "^12.12.36",
+		"copyfiles": "^2.2.0",
+		"electron": "^8.2.3",
+		"typescript": "^3.8.3"
+	},
+	"repository": "https://github.com/JiPaix/horriblesubs-desktop.git"
 }

@@ -1,0 +1,13 @@
+diff --git a/node_modules/needle/lib/needle.js b/node_modules/needle/lib/needle.js
+index 705efcf..32070ba 100644
+--- a/node_modules/needle/lib/needle.js
++++ b/node_modules/needle/lib/needle.js
+@@ -59,7 +59,7 @@ try {
+ 
+   // Enable Z_SYNC_FLUSH to avoid Z_BUF_ERROR errors (Node PR #2595)
+   var zlib_options = {
+-    flush: zlib.Z_SYNC_FLUSH,
++    // flush: zlib.Z_SYNC_FLUSH,
+     finishFlush: zlib.Z_SYNC_FLUSH
+   }
+ 

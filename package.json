@@ -8,6 +8,7 @@
 		"/dist"
 	],
 	"scripts": {
+		"postinstall": "patch-package",
 		"build-win": "rimraf dist && node node_modules/typescript/lib/tsc.js -p tsconfig.json",
 		"test": "rimraf dist && node node_modules/typescript/lib/tsc.js -p tsconfig.json && cp -R dl dist/dl && cp -R views dist/views && cp mkvextract* dist/ && node_modules\\electron\\dist\\electron.exe dist/main.js",
 		"start": "node node_modules/typescript/lib/tsc.js -p tsconfig.json && node_modules\\electron\\dist\\electron.exe dist/main.js"
@@ -36,7 +37,9 @@
 		"lodash": "^4.17.15",
 		"lowdb": "^1.0.0",
 		"needle": "^2.4.1",
+		"patch-package": "^6.2.2",
 		"popper.js": "^1.16.1",
+		"postinstall-postinstall": "^2.1.0",
 		"pug": "^2.0.4",
 		"rimraf": "^3.0.2",
 		"socket.io": "^2.3.0",

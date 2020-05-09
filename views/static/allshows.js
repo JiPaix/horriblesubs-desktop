@@ -2,7 +2,6 @@ $(document).ready(function() {
 	$('.goto').bind('click', function(e) {
 		$('#blackout').show()
 
-		window.location.href = $(this).attr('href')
 	})
 	$('#allshows').toggleClass('active')
 

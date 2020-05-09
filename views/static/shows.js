@@ -10,14 +10,20 @@ $('document').ready(() => {
 		batch = true
 		$('#dlall').fadeOut(1000)
 		$('#dlperc').show()
-		socket.emit('download all', JSON.parse($(this).attr('data')))
+		ipc.send('download all', JSON.parse($(this).attr('data')))
+	})
+	$('#MAL').click(function(e) {
+		ipc.send('data-search', {
+			name: $(this).attr('data'),
+			keyword: $(this).attr('data')
+		})
 	})
 	$('#followthis').click(function(e) {
 		if ($(this).hasClass('follow')) {
-			socket.emit('follow', myshow.id)
+			ipc.send('follow', myshow.id)
 			$(this).html('UNFOLLOW')
 		} else {
-			socket.emit('unfollow', myshow.id)
+			ipc.send('unfollow', myshow.id)
 			$(this).html('FOLLOW')
 		}
 		$(this).toggleClass('follow unfollow')
@@ -37,18 +43,20 @@ $('document').ready(() => {
 				},
 				1000
 			)
-			myshow.ep = $(this).attr('data-ep')
-			socket.emit('watch', {
+			myshow.ep = parseFloat($(this).attr('data-ep'))
+			ipc.send('watch', {
 				ep: $(this).attr('data-ep'),
 				name: myshow.name,
 				bot: $(this).attr('data-bot'),
 				pack: $(this).attr('data-pack'),
 			})
 			download = true
+			$(this).removeClass('btn-danger btn-secondary')
+			$(this).addClass('btn-danger')
 		}
 	})
 
-	socket.on('nobatch', () => {
+	ipc.on('nobatch', () => {
 		$('#dlperc > .progress-bar').removeClass('bg-warning')
 		$('#dlperc > .progress-bar').removeClass('bg-info')
 		$('#dlperc > .progress-bar').removeClass('bg-success')
@@ -63,13 +71,13 @@ $('document').ready(() => {
 		batch = false
 	})
 
-	socket.on('watch', (fileInfo) => {
+	ipc.on('watch', (_ev, fileInfo) => {
 		if (!batch) {
 			file = path.parse(fileInfo.file).name
 			file = path.join(videoPath + '/' + file)
 			$('#player').attr('src', 'file:///' + file + '.mkv')
 			$('#track').attr('src', 'file:///' + file + '.vtt')
-			let video = document.querySelector('.embed-responsive-16by9')
+			let video = document.querySelector('video.embed-responsive-16by9')
 			$('video')[0].load()
 			$('#dlperc').hide()
 			$('main').animate({ scrollTop: 0 }, 'slow')
@@ -79,7 +87,7 @@ $('document').ready(() => {
 					video.textTracks[0].mode = 'showing'
 					$('#dlperc').hide()
 					$('#perblue').width('0%')
-					socket.emit('watched', myshow)
+					ipc.send('watched', myshow)
 					download = false
 				})
 		} else {
@@ -96,7 +104,7 @@ $('document').ready(() => {
 					.play()
 					.then(() => {
 						video.textTracks[0].mode = 'showing'
-						socket.emit('watched', myshow)
+						ipc.send('watched', myshow)
 						toastr.success(
 							`${batchDone} / ${showLength} Episodes downloaded`
 						)
@@ -112,7 +120,7 @@ $('document').ready(() => {
 			batchDone++
 		}
 	})
-	socket.on('downloading', (perc) => {
+	ipc.on('downloading', (_ev, perc) => {
 		$('#dlperc').show()
 		$('#dlperc > .progress-bar').removeClass('bg-warning')
 		$('#dlperc > .progress-bar').removeClass('bg-success')

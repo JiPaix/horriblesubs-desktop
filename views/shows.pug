@@ -1,9 +1,8 @@
 include includes/head.pug
 title='hsd@show: '+show.name
-script(src='/static/shows.js')
+script(src='static://shows.js')
 include includes/topMenu.pug
-link(rel='stylesheet', href='/static/video.css')
-
+link(rel='stylesheet', href='static://video.css')
 main.container-fluid(style='position:absolute;overflow-y:auto;bottom:0;top:30px;')
 	.row.mt-2
 		.col-12
@@ -15,20 +14,21 @@ main.container-fluid(style='position:absolute;overflow-y:auto;bottom:0;top:30px;
 		.col-12.text-center
 			each link in show.links
 				if lastwatched
-					if lastwatched == link.ep
-						button.ep.m-1.btn.btn-danger(data-bot=link.bots[0].bot, data-pack=link.bots[0].pack, data-ep=link.ep) #{link.ep}
+					if lastwatched.includes(link.ep)
+						button.ep.m-1.btn.btn-sm.btn-danger(data-bot=link.bots[0].bot, data-pack=link.bots[0].pack, data-ep=link.ep) #{link.ep}
 					else
-						button.ep.m-1.btn.btn-secondary(data-bot=link.bots[0].bot, data-pack=link.bots[0].pack, data-ep=link.ep) #{link.ep}
+						button.ep.m-1.btn.btn-sm.btn-secondary(data-bot=link.bots[0].bot, data-pack=link.bots[0].pack, data-ep=link.ep) #{link.ep}
 				else
-					button.ep.m-1.btn.btn-secondary(data-bot=link.bots[0].bot, data-pack=link.bots[0].pack, data-ep=link.ep) #{link.ep}       
-			button#dlall.m-1.btn.btn-info(data=show) Download all episodes
+					button.ep.m-1.btn.btn-sm.btn-secondary(data-bot=link.bots[0].bot, data-pack=link.bots[0].pack, data-ep=link.ep) #{link.ep}       
+			button#dlall.m-1.btn.btn-sm.btn-info(data=show) Download all episodes
 			if follows
-				button#followthis.unfollow.m-1.btn.btn-danger UNFOLLOW
+				button#followthis.unfollow.m-1.btn.btn-sm.btn-danger UNFOLLOW
 			else
-				button#followthis.follow.m-1.btn.btn-warning FOLLOW
+				button#followthis.follow.m-1.btn.btn-sm.btn-warning FOLLOW
 	.row.mt-4
 		.col-12.my-2
 			h2.text-center #{show.name}
+			button#MAL.btn.btn-sm.btn-light(data=show.name) <i class="fas fa-info-circle"></i> MyAnimeList
 			p.mt-3 #{show.desc}
 script.
 	var myshow = {

@@ -1,22 +1,22 @@
-link(rel='stylesheet', href='/static/topMenu.css')
+link(rel='stylesheet', href='static://topMenu.css')
 body.bg-dark.text-white(style='overflow:hidden')
 	nav.navbar.navbar-expand.navbar-dark.bg-darker.sticky-top.drag
-		a.nodrag.navbar-brand(href='/') <i class="fas fa-home"></i>
+		a.nodrag.navbar-brand(href='pug://index') <i class="fas fa-home"></i>
 		button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarSupportedContent', aria-controls='navbarSupportedContent', aria-expanded='false', aria-label='Toggle navigation')
 			span.navbar-toggler-icon
 		#navbarSupportedContent.collapse.navbar-collapse
 			ul.nodrag.navbar-nav.mr-auto
 				li.nav-item.dropdown.ml-5
-					a#fav.nav-link(title='Favorites',href='/fav', role='button')
+					a#fav.nav-link(title='Favorites',href='pug://fav', role='button')
 						if typeof towatch !== 'undefined'
 							| <i class="fas fa-bookmark"></i><sup class="badge badge-danger" style="margin-left:-1px;">#{towatch.length}</sup>
 						else
 							| <i class="fas fa-bookmark"></i><sup class="badge badge-light">0</sup>
 				li.nav-item.dropdown.ml-4
-					a#allshows.nav-link(title='All Animes',href='/shows', role='button')
+					a#allshows.nav-link(title='All Animes',href='pug://allshows', role='button')
 						| <i class="fas fa-search"></i>
 				li.nav-item.dropdown.ml-5
-					a#hardrive.nav-link(title='Files',href='/files', role='button')
+					a#hardrive.nav-link(title='Files',href='pug://files', role='button')
 						| <i class="fas fa-hdd"></i>
 			ul.nodrag.navbar-nav.ml-auto
 				li.nav-item.dropdown
@@ -26,7 +26,7 @@ body.bg-dark.text-white(style='overflow:hidden')
 						a.dropdown-item.text-white(href='#') Import Backup File
 						a.dropdown-item.text-white(href='#') Export Backup File
 						.dropdown-divider.mx-1.my-1
-						a#settings.dropdown-item.text-white(href='#') Settings
+						a#settings.dropdown-item.text-white Settings
 						.dropdown-divider.mx-1.my-1
 						a.dropdown-item.text-white(href='#') ⚡ Reset ⚡
 				a#minimize.nav-link <i class="far fa-window-minimize"></i>
@@ -34,4 +34,4 @@ body.bg-dark.text-white(style='overflow:hidden')
 				a#exit.nav-link <i class="fas fa-times"></i>
 	.progress.sticky-top.sticky-top#dlperc(style="height:2px;border-radius:0")
 		#perblue.progress-bar.progress-bar-striped.progress-bar-animated(role="progressbar", aria-valuenow="75", aria-valuemin="0", aria-valuemax="100")
-	#blackout(style='background-image:url(/static/img/transpGreyBG.png); display:none')
+	#blackout(style='background-image:url(static://img/transpGreyBG.png); display:none')

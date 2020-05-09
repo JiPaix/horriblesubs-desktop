@@ -1,7 +1,12 @@
-const socket = io()
 $(document).ready(function() {
-	socket.on('fav-update', function() {
-		$('sup.badge').text(parseInt($('sup.badge').text()) + 1)
+	ipc.on('fav-update', function(_ev, arg) {
+		if(arg) {
+			$('sup.badge').text(arg.length)
+			$('sup.badge').removeClass('badge-light badge-danger')
+			$('sup.badge').addClass('badge-danger')
+			let audio = new Audio('static://audio/notif.wav')
+			audio.play();
+		}
 	})
 	$('#dlperc').hide()
 	$('#exit').on('click', function() {

@@ -19,7 +19,7 @@ export default class searcher extends fetcher {
 		url: string,
 		stopAt?: number | boolean
 	): Promise<Show | undefined> {
-		const show = await this.fetchShow(this.homePage + url)
+		const show = await this.fetchShow(this.homePage + '/shows/'+ url )
 		if (typeof show !== 'undefined') {
 			const findEpisodes = await this.findEpisodes(show.id, stopAt)
 			if (typeof findEpisodes !== 'undefined') {

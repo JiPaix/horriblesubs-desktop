@@ -5,14 +5,14 @@ else
     title="hsd@fav"
 script(src='//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js')
 script(src='https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js')
-script(src='/static/fav.js')
+script(src='static://fav.js')
 link(rel='stylesheet', href='https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css')
-link(rel='stylesheet', href='/static/fav.css')
+link(rel='stylesheet', href='static://fav.css')
 include includes/topMenu.pug
 main.container.mt-2
     .mt-4
         if typeof shows !== 'undefined'
-            table.table.table-hover.table-dark.table-striped.table-bordered(style="width:100%")
+            table.table.table-hover.table-dark.table-striped.table-bordered.table-sm(style="width:100%")
                 thead
                     tr.bg-secondary
                         th &#8195;&#8195;
@@ -25,7 +25,7 @@ main.container.mt-2
                             - show.showLink = show.showLink.replace('/shows/', '')
                             tr
                                 td.align-middle.text-center
-                                    img.img-fluid(src=show.img, style='max-height:40px;transition-duration: 0.5s;z-index:-10')
+                                    img.img-fluid(src=show.img)
                                 td.align-middle
                                     a.text-decoration-none.text-white(href='/shows/'+show.showLink) #{show.name}
                                 td.align-middle.text-center #{show.lastwatched}

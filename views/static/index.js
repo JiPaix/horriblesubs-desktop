@@ -16,7 +16,7 @@ $('document').ready(() => {
 				},
 				1000
 			)
-			socket.emit('watchFromIndex', myshow)
+			ipc.send('watchFromIndex', myshow)
 			downloading = true
 		} else {
 			toastr.warning(
@@ -26,7 +26,7 @@ $('document').ready(() => {
 		}
 	})
 
-	socket.on('watch', (fileInfo) => {
+	ipc.on('watch', (_ev, fileInfo) => {
 		file = path.parse(fileInfo.file).name
 		file = path.join(videoPath + '/' + file)
 		$('#player').attr('src', 'file:///' + file + '.mkv')
@@ -39,11 +39,11 @@ $('document').ready(() => {
 			.play()
 			.then(() => {
 				video.textTracks[0].mode = 'showing'
-				socket.emit('watched', myshow)
+				ipc.send('watched', myshow)
 				downloading = false
 			})
 	})
-	socket.on('downloading', (perc) => {
+	ipc.on('downloading', (_ev, perc) => {
 		downloading = true
 		$('#perblue').width(perc + '%')
 		$('#dlperc > .progress-bar').removeClass('bg-warning')
@@ -59,7 +59,7 @@ $('document').ready(() => {
 			)
 		}
 	})
-	socket.on('addIndex', (todo) => {
+	ipc.on('addIndex', (_ev, todo) => {
 		let parent = document.createElement('div')
 		parent.className = 'col-2 px-1 mb-4 text-center'
 		let a = document.createElement('a')
@@ -105,14 +105,21 @@ $('document').ready(() => {
 		parent.appendChild(a)
 		let row = document.querySelector('div.row.mt-4')
 		row.prepend(parent)
-		toastr.info(`Episode ${todo.ep}`, `${todo.name}`, {
-			timeout: 0,
-		})
+		if (allFollows.includes(todo.id)) {
+			toastr.info(`Episode ${todo.ep}`, `${todo.name}`, {
+				timeOut: 0,
+			})
+		} else {
+			toastr.info(`Episode ${todo.ep}`, `${todo.name}`, {
+				timeOut: 5000,
+			})
+		}
+
 	})
 	$('#index').on('contextmenu', '.col-2 > a', function(e) {
 		$('#blackout').show()
 		let clicked = JSON.parse($(this).attr('data'))
-		window.location.href = '/shows/' + clicked.showLink
+		window.location.href = 'pug://shows/' + clicked.showLink
 		return false
 	})
 })

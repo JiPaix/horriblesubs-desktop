@@ -16,11 +16,11 @@ $(document).ready(function() {
 		pageLength: 999,
 		order: [[4, 'desc']],
 		columns: [
-			{ width: '2%', orderable: false },
-			{ width: '92%' },
-			{ width: '2%' },
-			{ width: '2%' },
-			{ width: '2%' },
+			{ width: '17%', orderable: false },
+			{ width: '80%', orderable: true },
+			{ width: '1%', orderable: true },
+			{ width: '1%', orderable: true },
+			{ width: '1%', orderable: true },
 		],
 	})
 })

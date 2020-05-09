@@ -1,6 +1,6 @@
 include includes/head.pug
-link(rel='stylesheet', href='/static/topMenu.css')
-link(rel='stylesheet', href='/static/bootstrap4-toggle/css/bootstrap4-toggle.min.css')
+link(rel='stylesheet', href='static://topMenu.css')
+link(rel='stylesheet', href='module://bootstrap4-toggle/css/bootstrap4-toggle.min.css')
 body.bg-dark.text-white(style='overflow:hidden')
 	nav.navbar.navbar-expand.navbar-dark.bg-darker.sticky-top.drag
 		#navbarSupportedContent.collapse.navbar-collapse
@@ -10,7 +10,6 @@ body.bg-dark.text-white(style='overflow:hidden')
 				a#resize.nav-link <i class="far fa-window-maximize"></i>
 				a#hide.nav-link <i class="fas fa-times"></i>
 	main.container-fluid.p-0(style='position:absolute;overflow-y:auto;bottom:0;top:24px;overflow-x:hidden')
-
 		.row.mt-4.p-3
 			.col-12
 				h4.text-center.text-uppercase
@@ -96,7 +95,7 @@ script.
 			duration = durationValue * 86400000
 		}
 		let startupcheck = $('#checkstartup')[0].checked
-		let downloads = $('#folder').text()
+		let downloads = $('#path').text().replace(' *not saved', '')
 		let size = $('#size')[0].value
 
 			const res  = {
@@ -107,7 +106,6 @@ script.
 				pathSize: size
 			}
 			ipc.send('settings-save', res)
-
 	})
 style.
 	a#hide:hover {

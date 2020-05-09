@@ -62,10 +62,10 @@ export default class horriblesubs extends searcher {
 				this.emit('addIndex', current)
 				data.push(current).write()
 				if (typeof follow !== 'undefined') {
-					follow = follow.find({ id: current.id }).value()
-					if (typeof follow !== 'undefined') {
+					let res = follow.find({ id: current.id })
+					let found = res.value()
+					if (typeof found !== 'undefined') {
 						this.displayShow(current.showLink)
-						this.emit('fav-update')
 					}
 				}
 			} else {
@@ -94,12 +94,11 @@ export default class horriblesubs extends searcher {
 			})
 	}
 	async displayShow(show: Show['showLink']) {
-		show = '/shows/' + show
 		let data: any = this.db.get('shows')
 		let dbShow = data.find({ showLink: show })
 		let res: Show = dbShow.value()
 		if (typeof res !== 'undefined') {
-			let tmp = _.maxBy(res.links, (res) => res.ep)
+			let tmp = _.maxBy(res.links, (res: { ep: number }) => res.ep)
 			if (typeof tmp !== 'undefined') {
 				const lastShowInDB = tmp.ep
 				let update = await this.showUpdate(show, lastShowInDB)
@@ -110,6 +109,7 @@ export default class horriblesubs extends searcher {
 					)
 					updated = _.sortBy(links.concat(updated), ['ep'])
 					dbShow.assign({ links: updated }).write()
+					this.emit('check-update')
 					return dbShow.value()
 				} else {
 					return dbShow.value()
@@ -143,12 +143,12 @@ export default class horriblesubs extends searcher {
 			}
 		}
 	}
-	findLastWatched(id: number): number | string {
+	findLastWatched(id: number): number[] | undefined {
 		let data: any = this.db.get('watched')
 		let find = data.find({ id: id })
 		let res = find.value()
 		if (typeof res === 'undefined') {
-			return -999
+			return undefined
 		} else {
 			return res.ep
 		}
@@ -165,36 +165,30 @@ export default class horriblesubs extends searcher {
 		}
 	}
 
-	whatToWatch(displayall = false) {
+	whatToWatch(displayall = false): Show[] | undefined{
 		const f: any = this.db.get('follows').value()
+		const showsInDB: any = this.db.get('shows')
+		const watched: any = this.db.get('watched')
 		const shows: Show[] = []
-		for (let index = 0; index < f.length; index++) {
-			const el: Show = f[index]
-			let s: any = this.db.get('shows')
-			s = s.find({ id: el.id }).value()
-			if (typeof s !== 'undefined') {
-				let w: any = this.db.get('watched')
-				w = w.find({ id: el.id }).value()
+		for(const show of f) {
+			const showInDB = showsInDB.find({id: show.id}).value()
+			if(typeof showInDB !== 'undefined') {
+				const iswatched = watched.find({id: show.id}).value()
+				let lastwatched = 0
+				if(typeof iswatched !== 'undefined') {
+					lastwatched = Math.max(...iswatched.ep)
+				}
 				const lastreleased = Math.max.apply(
 					Math,
-					s.links.map(function(o: { ep: any }) {
+					showInDB.links.map(function(o: { ep: any }) {
 						return o.ep
 					})
 				)
-				let lastwatched: number = 0
-				if (typeof w !== 'undefined') {
-					lastwatched = Math.max.apply(null, w.ep)
-				}
-				if (lastreleased > lastwatched) {
-					s.lastwatched = lastwatched
-					s.lastreleased = lastreleased
-					shows.push(s)
-				} else {
-					if (displayall) {
-						s.lastwatched = lastwatched
-						s.lastreleased = lastreleased
-						shows.push(s)
-					}
+				if(lastreleased > lastwatched || displayall) {
+					const newShow = showInDB
+					newShow.lastwatched = lastwatched
+					newShow.lastreleased = lastreleased
+					shows.push(newShow)	
 				}
 			}
 		}
@@ -283,7 +277,6 @@ export default class horriblesubs extends searcher {
 			| Shows
 			| { ep: string; name: string; bot: string; pack: string | number }
 	) {
-		console.log('looking for files')
 		let b = fs
 			.readdirSync(this.path)
 			.filter((file) =>

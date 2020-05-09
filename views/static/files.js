@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	socket.on('deleted-file', function(file) {
+	ipc.on('deleted-file', function(_ev, file) {
 		$(`tr[data-filename="${file}"]`).remove()
 		$('#blackout').hide()
 	})
@@ -15,12 +15,24 @@ $(document).ready(function() {
 			)
 		})
 		if (emit.length > 0) {
-			socket.emit('delete-files', emit)
+			remote.dialog.showMessageBox({
+				type: 'warning',
+				title: 'Confirmation',
+				buttons: ['No', 'Yes'],
+				message: `Are you sure you want to delete these files ?\n\n- ${emit.join('\n- ')}`
+			}).then((ok) => {
+				if(ok.response) {
+					ipc.send('delete-files', emit)
+				} else {
+					$('#blackout').hide()
+				}
+			})
 		} else {
 			$('#blackout').hide()
 		}
 	})
 	$('tbody').on('click', 'tr[data-filename]', function() {
+		console.log('clickoty')
 		$(this).toggleClass('selected')
 	})
 	$('#hardrive').toggleClass('active')

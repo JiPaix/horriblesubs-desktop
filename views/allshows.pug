@@ -1,7 +1,7 @@
 include includes/head.pug
 title="hsd@database"
-script(src='/static/allshows.js')
-link(rel='stylesheet', href='/static/allshows.css')
+script(src='static://allshows.js')
+link(rel='stylesheet', href='static://allshows.css')
 include includes/topMenu.pug
 main.container-fluid.mt-2(style='position:absolute;overflow-y:auto;bottom:0;top:22px;')
     .row.mt-4.mb-0.mx-1
@@ -19,6 +19,6 @@ main.container-fluid.mt-2(style='position:absolute;overflow-y:auto;bottom:0;top:
                 each show in shows
                     tr
                         td.align-middle.text-center(style="width:1%;")
-                            a.goto(href=show.url) <i class="fas fa-film"></i>
+                            a.goto(href='pug:/'+show.url) <i class="fas fa-film"></i>
                         td.align-middle #{show.name}
                         td.align-middle.text-center.MAL(style="width:1%;", data-name=show.name, data-showlink=show.showLink data-search=show.name) <i class="fas fa-info-circle"></i>

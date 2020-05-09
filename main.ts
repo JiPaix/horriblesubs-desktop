@@ -14,8 +14,9 @@ import XDCC from 'xdccjs'
 import * as ass2vtt from 'ass-to-vtt'
 import * as needle from 'needle'
 app.allowRendererProcessReuse = true
-const adapter = new FileSync(path.normalize(path.join(__dirname, 'db.json')))
-let db: low.LowdbSync<any> | null = low(adapter)
+
+
+let db: low.LowdbSync<any> | null = low(new FileSync(path.normalize(path.join(__dirname, 'db.json'))))
 db.defaults({
 	shows: [],
 	index: [],
@@ -51,7 +52,7 @@ if (db.get('settings').value().length === 0) {
 if (firstBoot) {
 	let data: any = db!.get('settings')
 	data.find({ id: 0 })
-		.assign({ startupCheck: false }) // !!!a changer en true: j'ai mis false pour eviter les requetes abusive
+		.assign({ startupCheck: true }) // !!!a changer en true: j'ai mis false pour eviter les requetes abusive
 		.write()
 	data = null
 }
@@ -369,7 +370,20 @@ class desktop extends horriblesubs {
 		})
 	}
 	listenIPCwindowsEvents() {
+		this.windows.win.on('close', () => {
+			if(this.interval && this.fetchInterval) {
+				clearInterval(this.interval)
+				clearInterval(this.fetchInterval)
+			}
+			app.quit()
+			process.exit(0)
+
+		})
 		ipcMain.on('quit', () => {
+			if(this.interval && this.fetchInterval) {
+				clearInterval(this.interval)
+				clearInterval(this.fetchInterval)
+			}
 			app.quit()
 			process.exit(0)
 		})
@@ -422,8 +436,8 @@ class desktop extends horriblesubs {
 		})
 	}
 	checkFirstbootAndShow() {
-		if (setup.firstBoot) {
-			ipcMain.on('addIndex', () => {
+		if (firstBoot) {
+			this.once('addIndex', () => {
 				this.windows.win.loadURL('pug://index')
 				setup.firstBoot = false
 			})

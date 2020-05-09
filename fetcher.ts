@@ -16,6 +16,7 @@ export default class fetcher extends event {
 	public shows: Array<Shows>
 	public API_NEXTPAGE: string
 	public API_MAX: 2
+	fetchInterval: NodeJS.Timeout | undefined
 	constructor() {
 		super()
 		this.homePage = 'https://horriblesubs.info'
@@ -26,7 +27,7 @@ export default class fetcher extends event {
 		this.shows = []
 	}
 	autoFetch(ms: number) {
-		setInterval(() => {
+		this.fetchInterval = setInterval(() => {
 			this.fetchIndex()
 		}, ms)
 	}

@@ -7,13 +7,15 @@ import * as fs from 'fs'
 import * as Path from 'path'
 import * as filesize from 'filesize'
 
-const adapter = new FileSync(Path.normalize(Path.join(__dirname, 'db.json')))
+
 
 export default class horriblesubs extends searcher {
 	refreshIndex: number
 	keepIndex: number
 	path: string
 	db: low.LowdbSync<any>
+	interval: NodeJS.Timeout | undefined
+	adapter: any
 	/**
 	 * @param refreshIndex - Minutes between each refresh of index
 	 * @param keepIndex - Month before index entries are removed from database
@@ -26,7 +28,7 @@ export default class horriblesubs extends searcher {
 		checkStartup: boolean
 	) {
 		super()
-		this.db = low(adapter)
+		this.db = low(new FileSync(Path.normalize(Path.join(__dirname, 'db.json'))))
 		this.db
 			.defaults({
 				shows: [],
@@ -46,7 +48,7 @@ export default class horriblesubs extends searcher {
 		this.autoUpdateDB()
 	}
 	autoUpdateDB() {
-		setInterval(() => {
+		this.interval = setInterval(() => {
 			this.updateIndex()
 		}, 5000)
 	}

@@ -72,10 +72,6 @@ export default class fetcher extends event {
 										.replace('#', '')
 										.replace('-', '.')
 									ep = parseFloat(ep)
-									console.log(
-										'\x1b[36m%s\x1b[0m',
-										`job number: ${index}`
-									)
 									this.shows.push({
 										id: res.id,
 										name: res.name,
@@ -108,53 +104,70 @@ export default class fetcher extends event {
 		)
 		try {
 			let html = await needle('get', url)
-			let parsed = html.body.replace(/(p\.k\[\d+\]\s\=\s)/gi, '')
+			let parsed: string = html.body.replace(/(p\.k\[\d+\]\s\=\s)/gi, '')
 			parsed = parsed.replace(/(;[^;$])/gi, ',')
 			parsed = parsed.replace(/.$/gi, ']')
 			parsed = `[${parsed}`
-			if (typeof eval(parsed) === 'object') {
-				let res: Shows['quality']['bots'] = eval(parsed).map(
-					(bots: { f: string; b: string; n: number; s: number }) => {
-						if (bots.f.includes(file)) {
-							return { bot: bots.b, pack: bots.n }
-						}
-					}
-				)
+			const evaluated: Array<{
+				f: string
+				b: string
+				n: number
+				s: number
+			}> = eval(parsed)
+			if (
+				typeof evaluated === 'object' &&
+				typeof evaluated !== 'undefined'
+			) {
+				let res = evaluated.filter(bots => bots.f.includes(file)).map(({b, n}) => ({bot: b, pack: n}))
 				res = res.sort((item1, item2) => {
 					if (
-						item1.bot.includes('NEW') &&
-						item2.bot.includes('Sensei')
+						typeof item1 !== 'undefined' &&
+						typeof item2 !== 'undefined'
 					) {
-						return -1
-					}
-					if (
-						item1.bot.includes('Sensei') &&
-						item2.bot.includes('ARCHIVE')
-					) {
-						return -1
-					}
-					if (
-						item1.bot.includes('NEW') &&
-						item2.bot.includes('ARCHIVE')
-					) {
-						return -1
-					}
-					if (
-						item1.bot.includes('HOLLAND') &&
-						!item2.bot.includes('HOLLAND')
-					) {
-						return -1
+						if (
+							item1.bot.includes('NEW') &&
+							item2.bot.includes('Sensei')
+						) {
+							return -1
+						}
+						if (
+							item1.bot.includes('Sensei') &&
+							item2.bot.includes('ARCHIVE')
+						) {
+							return -1
+						}
+						if (
+							item1.bot.includes('NEW') &&
+							item2.bot.includes('ARCHIVE')
+						) {
+							return -1
+						}
+						if (
+							item1.bot.includes('HOLLAND') &&
+							!item2.bot.includes('HOLLAND')
+						) {
+							return -1
+						}
 					}
 					return 1
 				})
-				res = res.filter((el) => typeof el !== 'undefined')
-				return {
-					resolution: parsed
-						.match(/(\[\d+p\])/g)[0]
-						.replace(/\[/g, '')
-						.replace(/\]/g, ''),
-					bots: res,
+
+				if(typeof res !== 'undefined') {
+					res = res.filter((el) => typeof el !== 'undefined')
+					let tmp = parsed.match(/(\[\d+p\])/g)
+					if(tmp !== null) {
+						const resolution = tmp[0].replace(/\[/g, '').replace(/\]/g, '')
+						return {
+							resolution: resolution,
+							bots: res,
+						}
+					} else {
+						throw Error(`couldn't find a match`)
+					}
+				} else {
+					throw Error(`couldn't sort`)
 				}
+
 			} else {
 				throw EvalError(`couldn't eval: '${html}' from : ${url}`)
 			}
